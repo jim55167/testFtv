@@ -1,0 +1,106 @@
+﻿@model testFTV.Models.Home.HomeIndexViewModel
+
+@{
+    ViewData["Title"] = "民視新聞網 - 24小時不間斷專業新聞服務";
+}
+
+<div class="row">
+    @foreach (var item in Model.TextBasedGuide)
+    {
+        <div><a href="@item.Url">@item.Title</a></div>
+    }
+</div>
+
+<div class="row">
+    <div class="col col-marquee mt-20">
+        <div class="marquee swiper-container">
+            <ul class="marquee-carousel swiper-wrapper">
+                @foreach (var news in Model.HotNewsList)
+                {
+                    <li class="swiper-slide">
+                        <a href="@news.Url">@news.Title</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="cover-main cover-bg">
+    <div class="cover-left">
+        <ul class="focus-carousel swiper-wrapper">
+            @foreach (var news in Model.FocusNewsList)
+            {
+                <li class="swiper-slide">
+                    <a href="@news.Url">@news.Title</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="cover-right">
+        <ul>
+            @foreach (var news in Model.HotNewList)
+            {
+                <li><a href="@news.Url">@news.Title</a></li>
+            }
+        </ul>
+    </div>
+</div>
+
+<section class="container mt-20">
+    <div class="row">
+
+        <div class="col-md-4">
+            <h3>@Model.D1.SectionTitle</h3>
+            <ul>
+                @foreach (var n in Model.D1.Items)
+                {
+                    <li><a href="@n.Url">@n.Title</a></li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-4">
+            <h3>@Model.D2.SectionTitle</h3>
+            <ul>
+                @foreach (var n in Model.D2.Items)
+                {
+                    <li><a href="@n.Url">@n.Title</a></li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-4">
+            <h3>@Model.D3.SectionTitle</h3>
+            <ul>
+                @foreach (var n in Model.D3.Items)
+                {
+                    <li><a href="@n.Url">@n.Title</a></li>
+                }
+            </ul>
+        </div>
+
+    </div>
+</section>
+
+<div class="swiper-article">
+    @foreach (var img in Model.CarouselImages)
+    {
+        <a href="@img.LinkUrl"><img src="@img.ImageUrl" /></a>
+    }
+</div>
+
+<section class="row">
+    <ul class="anchor-carousel swiper-wrapper">
+        @foreach (var a in Model.AnchorList)
+        {
+            <li class="swiper-slide">
+                <a href="@a.Url">
+                    <img src="@a.ImageUrl" alt="@a.Name" />
+                    <div>@a.Name</div>
+                </a>
+            </li>
+        }
+    </ul>
+</section>
