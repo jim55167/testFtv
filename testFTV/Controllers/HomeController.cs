@@ -17,21 +17,19 @@ namespace testFTV.Controllers
 
     public async Task<IActionResult> Index()
     {
+      var realtime = await _service.LoadRealtime();
+
       var vm = new HomeIndexViewModel
       {
-        HotNewsListHtml = await _service.LoadHotNewsList(),
-        FocusNewsListHtml = await _service.LoadFocusNewsList(),
-        HotNewListHtml = await _service.LoadHotNewList(),
-        ProjNewsHtml = await _service.LoadProjNews(),
-        ProgListHtml = await _service.LoadProgList(),
-        AnchorListHtml = await _service.LoadAnchorList(),
-        HotLiveHtml = await _service.LoadHotLive(),
-        HomeVideoHtml = await _service.LoadHomeVideo(),
-        NewsVideoHtml = await _service.LoadNewsVideo(),
-        TextBasedGuideHtml = await _service.LoadTextBasedGuide(),
-        CarouselImageHtml = await _service.LoadCarouselImage(),
-        FTVLiveImageHtml = await _service.LoadFTVLiveImage(),
-        ShortVideoHtml = await _service.LoadShortVideos(),
+        TextBasedGuide = await _service.LoadTextBasedGuide(),
+        HotNewsList = await _service.LoadHotNewsList(),
+        FocusNewsList = await _service.LoadFocusNewsList(),
+        HotNewList = await _service.LoadHotNewList(),
+        CarouselImages = await _service.LoadCarouselImages(),
+        AnchorList = await _service.LoadAnchorList(),
+        D1 = realtime.D1,
+        D2 = realtime.D2,
+        D3 = realtime.D3,
       };
 
       var realtime = await _service.LoadRealtime();

@@ -2,8 +2,8 @@ namespace testFTV.Services
 {
   public class P_APIInfo
   {
-    public static string btnNAme = "API更新";
-    public static string CKNAme = "API更新";
+    public static string btnName = "API更新";
+    public static string CKName = "API更新";
 
     public string UrlInfo(int APICate)
     {

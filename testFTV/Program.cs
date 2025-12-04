@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<P_APIInfo>();
 builder.Services.AddHttpClient<F_httpPost>();
+builder.Services.AddScoped<HomeService>();
 builder.Services.AddScoped<InviteService>();
 builder.Services.AddSingleton<Now_date>();
 
