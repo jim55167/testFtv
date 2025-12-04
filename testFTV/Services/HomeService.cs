@@ -6,12 +6,17 @@ namespace testFTV.Services
   public class HomeService
   {
     private readonly HttpClient _http;
+    private readonly F_httpPost _httpPost;
+    private readonly P_APIInfo _apiInfo;
 
-    private readonly string API_DOMAIN_V2;
-
-    public HomeService(HttpClient httpClient)
+    public HomeService(
+        HttpClient httpClient,
+        F_httpPost httpPost,
+        P_APIInfo apiInfo)
     {
       _http = httpClient;
+      _httpPost = httpPost;
+      _apiInfo = apiInfo;
     }
 
     private async Task<JObject?> GetJson(string url)
@@ -35,17 +40,75 @@ namespace testFTV.Services
       return Task.FromResult<IEnumerable<NewsItem>>(items);
     }
 
-    public Task<IEnumerable<NewsItem>> LoadHotNewsList()
+    public async Task<IEnumerable<NewsItem>> LoadHotNewsList()
     {
-      var items = new List<NewsItem>
-      {
-        new() { Title = "熱門新聞 1", Url = "/news/hot-1" },
-        new() { Title = "熱門新聞 2", Url = "/news/hot-2" },
-        new() { Title = "熱門新聞 3", Url = "/news/hot-3" },
-      };
+      try
+      {   
+      string apiDomain = _apiInfo.UrlInfo(15);
+      string requestUrl = $"{apiDomain}API/HotNewsList";
 
-      return Task.FromResult<IEnumerable<NewsItem>>(items);
+      string response = await _httpPost.Get_HttpStatus(
+          requestUrl,
+          "application/json",
+          string.Empty,
+          "GET",
+          "200");
+
+      if (string.IsNullOrWhiteSpace(response))
+      {
+        return Enumerable.Empty<NewsItem>();
+      }
+
+      var json = JObject.Parse(response);
+      var data = json["Data"] ?? json["data"] ?? json["Result"];
+
+      if (data == null || data.Type != JTokenType.Array)
+      {
+        return Enumerable.Empty<NewsItem>();
+      }
+
+      var items = new List<NewsItem>();
+
+      foreach (var entry in data)
+      {
+        string title = GetString(entry, "fsTitle", "fsTITLE", "title");
+        string url = GetString(entry, "fsUrl", "fsURL", "url", "linkUrl", "link");
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+          items.Add(new NewsItem
+          {
+            Title = title,
+            Url = string.IsNullOrWhiteSpace(url) ? "/" : url
+          });
+        }
+      }
+
+      return items;
     }
+      catch
+      {
+        return Enumerable.Empty<NewsItem>();
+      }
+}
+
+private static string GetString(JToken token, params string[] propertyNames)
+{
+  foreach (var name in propertyNames)
+  {
+    var value = token?[name];
+    if (value != null && value.Type != JTokenType.Null)
+    {
+      var str = value.ToString();
+      if (!string.IsNullOrWhiteSpace(str))
+      {
+        return str;
+      }
+    }
+  }
+
+  return string.Empty;
+}
 
     public Task<IEnumerable<NewsItem>> LoadFocusNewsList()
     {
@@ -70,64 +133,3 @@ namespace testFTV.Services
 
       return Task.FromResult<IEnumerable<NewsItem>>(items);
     }
-
-    public Task<IEnumerable<ImageCarouselItem>> LoadCarouselImages()
-    {
-      var items = new List<ImageCarouselItem>
-      {
-        new() { ImageUrl = "/images/carousel-1.jpg", LinkUrl = "/news/carousel-1" },
-        new() { ImageUrl = "/images/carousel-2.jpg", LinkUrl = "/news/carousel-2" },
-        new() { ImageUrl = "/images/carousel-3.jpg", LinkUrl = "/news/carousel-3" },
-      };
-
-      return Task.FromResult<IEnumerable<ImageCarouselItem>>(items);
-    }
-
-    public Task<IEnumerable<AnchorItem>> LoadAnchorList()
-    {
-      var items = new List<AnchorItem>
-      {
-        new() { Name = "主播甲", Url = "/anchor/a", ImageUrl = "/images/anchor-a.jpg" },
-        new() { Name = "主播乙", Url = "/anchor/b", ImageUrl = "/images/anchor-b.jpg" },
-        new() { Name = "主播丙", Url = "/anchor/c", ImageUrl = "/images/anchor-c.jpg" },
-      };
-
-      return Task.FromResult<IEnumerable<AnchorItem>>(items);
-    }
-
-    public Task<(SectionModel D1, SectionModel D2, SectionModel D3)> LoadRealtime()
-    {
-      var d1 = new SectionModel
-      {
-        SectionTitle = "即時 - 1",
-        Items = new List<NewsItem>
-        {
-          new() { Title = "即時 1-1", Url = "/news/realtime-1-1" },
-          new() { Title = "即時 1-2", Url = "/news/realtime-1-2" },
-        }
-      };
-
-      var d2 = new SectionModel
-      {
-        SectionTitle = "即時 - 2",
-        Items = new List<NewsItem>
-        {
-          new() { Title = "即時 2-1", Url = "/news/realtime-2-1" },
-          new() { Title = "即時 2-2", Url = "/news/realtime-2-2" },
-        }
-      };
-
-      var d3 = new SectionModel
-      {
-        SectionTitle = "即時 - 3",
-        Items = new List<NewsItem>
-        {
-          new() { Title = "即時 3-1", Url = "/news/realtime-3-1" },
-          new() { Title = "即時 3-2", Url = "/news/realtime-3-2" },
-        }
-      };
-
-      return Task.FromResult((d1, d2, d3));
-    }
-  }
-}
