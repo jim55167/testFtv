@@ -32,14 +32,6 @@ namespace testFTV.Controllers
         D3 = realtime.D3,
       };
 
-      var realtime = await _service.LoadRealtime();
-      vm.D1_St = realtime.D1_St;
-      vm.D2_St = realtime.D2_St;
-      vm.D3_St = realtime.D3_St;
-      vm.D1_List = realtime.D1_List;
-      vm.D2_List = realtime.D2_List;
-      vm.D3_List = realtime.D3_List;
-
       return View(vm);
     }
 
