@@ -1,0 +1,120 @@
+﻿body {
+  background-color: #F5F7F9;
+  color: #303A49;
+  margin-top: 20px;
+  margin-left: 0px;
+  margin-bottom: 20px;
+  margin-right: 0px;
+  min-height: 300px;
+}
+
+img {
+  width: 100% !important;
+  margin: 20px auto;
+}
+
+figure {
+  display: block;
+  background: #fff;
+  padding: 0;
+  margin: 10px 0;
+  width: 100% !important;
+}
+
+  figure img {
+    margin: 0;
+    margin-bottom: 0;
+  }
+
+  figure figcaption {
+    font-size: 0.85em;
+    color: #6b7175;
+    padding: 10px;
+    padding-left: 30px;
+    position: relative;
+    line-height: 1.6em;
+  }
+
+    figure figcaption:before {
+      content: "▲";
+      position: absolute;
+      left: 10px;
+    }
+
+iframe {
+  width: 100% !important;
+}
+
+.exread-list {
+  padding: 0;
+  position: relative;
+  margin-top: 40px;
+}
+
+  .exread-list .heading {
+    color: #156894;
+    font-size: 1.2em;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .exread-list ul {
+    list-style: none;
+    padding: 0;
+  }
+
+    .exread-list ul li {
+      padding: 10px 0;
+      border-bottom: 1px dotted #eaeaea;
+    }
+
+      .exread-list ul li:last-child {
+        border-bottom-width: 0;
+      }
+
+      .exread-list ul li a {
+        position: relative;
+        width: 100%;
+        display: flex;
+        text-decoration: none !important;
+      }
+
+        .exread-list ul li a span {
+          color: $color4b;
+          display: flex;
+          font-size: 1em;
+          padding: 0;
+          align-items: center;
+          text-decoration: none !important;
+        }
+
+          .exread-list ul li a span.img {
+            background-image: url("https://news.ftv.com.tw/images/img-default.jpg");
+            background-size: cover;
+            overflow: hidden;
+            position: relative;
+            width: 100px;
+            height: 60px;
+            flex: 0 0 100px;
+          }
+
+            .exread-list ul li a span.img img {
+              display: none;
+            }
+
+          .exread-list ul li a span.title {
+            color: #303a49;
+            font-size: 1em;
+            font-weight: bold;
+            padding-left: 10px;
+          }
+
+        .exread-list ul li a:hover {
+          background: #f5f7f9;
+        }
+
+          .exread-list ul li a:hover span.title {
+            color: #004095;
+          }

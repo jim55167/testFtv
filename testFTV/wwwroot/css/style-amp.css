@@ -1,0 +1,348 @@
+﻿a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, body, canvas, caption, center, cite, code, dd, del, details, dfn, div, dl, dt, em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hgroup, html, i, iframe, img, ins, kbd, label, legend, li, mark, menu, nav, object, ol, output, p, pre, q, ruby, s, samp, section, small, span, strike, strong, sub, summary, sup, table, tbody, td, tfoot, th, thead, time, tr, tt, u, ul, var, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline
+}
+
+body {
+  background: #f5f7f9
+}
+
+.amp-body, .body {
+  margin: 0 auto 0;
+  max-width: 760px;
+  color: #444a4f;
+  font-size: 16px;
+  padding: 60px 15px 0
+}
+
+footer {
+  margin: 10px auto 20px;
+  max-width: 760px
+}
+
+a {
+  color: #153b5f;
+  text-decoration: none;
+  font-weight: 550
+}
+
+* {
+  font-family: sans-serif;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box
+}
+
+header {
+  background: #fff;
+  padding: 5px 5px;
+  margin-bottom: 30;
+  height: auto;
+  width: 100%;
+  max-width: 760px;
+  box-shadow: 6px 14px 36px rgba(48,58,73,0.06), 1px 4px 8px rgba(48,58,73,0.04);
+  text-align: center;
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  margin: 0 -15px
+}
+
+  header button.amp-navbtn {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    color: #aaa;
+    background-color: transparent;
+    border: 0;
+    width: 55px;
+    height: 55px
+  }
+
+article {
+  color: #303a49;
+  line-height: 1.8rem
+}
+
+  article .article-title {
+    margin: 20px 0
+  }
+
+    article .article-title h1 {
+      color: #303a49;
+      font-size: 1.6em;
+      margin: 10px 15px;
+      font-weight: bold;
+      text-align: center
+    }
+
+  article .cover img {
+    width: 100%
+  }
+
+  article amp-youtube {
+    margin: 10px -15px
+  }
+
+  article p {
+    padding: 0.8rem 0
+  }
+
+  article table {
+    max-width: 100%
+  }
+
+  article td {
+    padding: 5px;
+    border: solid 1px #aaa
+  }
+
+  article a {
+    color: #303a49
+  }
+
+    article a:hover {
+      color: #303a49
+    }
+
+  article b {
+    font-weight: bold
+  }
+
+  article figure {
+    position: relative;
+    margin: 20px -15px;
+    background: #fff
+  }
+
+    article figure figcaption {
+      color: #777;
+      display: block;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      padding: 10px 15px
+    }
+
+    article figure img {
+      display: block;
+      margin: 0 auto;
+      width: 100%
+    }
+
+    article figure figure {
+      margin: 0
+    }
+
+.amp-ad-container {
+  background: #f6f6f6;
+  margin: 1rem auto 1rem auto;
+  height: 250px;
+  width: 300px
+}
+
+.amp-social-share {
+  text-align: center
+}
+
+.news-list {
+  position: relative
+}
+
+  .news-list .heading {
+    color: #156894;
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 20px
+  }
+
+    .news-list .heading:after {
+      content: "";
+      display: block;
+      background: linear-gradient(90deg, #004095 15%, #007896 40%, #009f96 62%, #2ab159 100%);
+      width: 100%;
+      height: 2px;
+      margin-top: 10px;
+      padding: 0
+    }
+
+  .news-list > ul.heading {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 0;
+    margin-bottom: 0
+  }
+
+  .news-list ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap
+  }
+
+    .news-list ul li {
+      width: 50%
+    }
+
+      .news-list ul li a {
+        background: #fff;
+        box-shadow: 0 0 1px rgba(0,0,0,0.3);
+        border-radius: 5px;
+        display: block;
+        position: relative;
+        padding-bottom: 10px;
+        overflow: hidden;
+        box-shadow: 6px 14px 36px rgba(48,58,73,0.06), 1px 4px 8px rgba(48,58,73,0.04);
+        margin: 10px
+      }
+
+        .news-list ul li a span {
+          color: $color4b;
+          display: block;
+          font-size: 1.1rem;
+          padding: 5px 10px 0;
+          text-align: left
+        }
+
+          .news-list ul li a span.title {
+            color: #303a49;
+            font-size: 1.1rem;
+            overflow: hidden;
+            height: 2.9em;
+            font-weight: bold
+          }
+
+#sidebar {
+  background-color: #fff;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  width: 270px
+}
+
+  #sidebar ul.nav-secondary {
+    display: flex;
+    flex-wrap: wrap
+  }
+
+    #sidebar ul.nav-secondary li {
+      text-align: center;
+      width: 50%;
+      display: none;
+      height: 60px
+    }
+
+      #sidebar ul.nav-secondary li a {
+        padding: 0;
+        font-size: 1.1rem;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center
+      }
+
+      #sidebar ul.nav-secondary li.search, #sidebar ul.nav-secondary li.send {
+        display: block
+      }
+
+        #sidebar ul.nav-secondary li.search a, #sidebar ul.nav-secondary li.send a {
+          border-radius: 0px;
+          background: #fff;
+          color: #303a49
+        }
+
+          #sidebar ul.nav-secondary li.search a span, #sidebar ul.nav-secondary li.send a span {
+            color: #303a49;
+            display: flex;
+            width: auto;
+            height: auto;
+            overflow: hidden;
+            padding: 0 20px;
+            white-space: nowrap;
+            position: static;
+            opacity: 1;
+            transition: all 0.3s ease
+          }
+
+  #sidebar ul.navbar-nav {
+    display: block;
+    height: auto
+  }
+
+    #sidebar ul.navbar-nav li {
+      display: block;
+      text-align: center;
+      padding: 0
+    }
+
+      #sidebar ul.navbar-nav li a {
+        width: 100%;
+        padding: 10px;
+        display: block
+      }
+
+.hamburger {
+  position: relative;
+  width: 24px;
+  height: 4px;
+  background: #aaa;
+  border-radius: 4px;
+  float: right;
+  transition: all 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55)
+}
+
+  .hamburger:after, .hamburger:before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 4px;
+    background: #aaa;
+    position: absolute;
+    border-radius: 4px
+  }
+
+  .hamburger:before {
+    top: -8px;
+    left: 0;
+    width: 24px
+  }
+
+  .hamburger:after {
+    top: 8px;
+    width: 24px;
+    left: 0
+  }
+
+#crumbs ul {
+  list-style: none
+}
+
+  #crumbs ul li {
+    display: inline-block
+  }
+
+    #crumbs ul li:after {
+      content: "/";
+      padding-left: 5px
+    }
+
+    #crumbs ul li:last-child:after {
+      content: ""
+    }
+
+ul.news-status {
+  list-style: none;
+  text-align: center
+}
+
+  ul.news-status li {
+    display: inline-block
+  }
