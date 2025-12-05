@@ -42,47 +42,8 @@
         </main>
     </div>
 
-    <footer>
-        <section class="container">
-            <ul class="footer-nav row">
-                <li class="col-12 col-md-3">
-                    <div class="logo">
-                        <img loading="lazy" src="https://cdn.ftvnews.com.tw/client/images/logo-w.png" />
-                    </div>
-                </li>
-                <li class="col-12 col-md-9">
-                    <ul class="nav-link">
-                        <li><a href="https://www.ftv.com.tw/aboutftv.aspx" target="_blank">關於民視</a></li>
-                        <li><a href="https://www.ftv.com.tw/QAftv.aspx" target="_blank">常見問題 </a></li>
-                        <li><a href="https://www.ftv.com.tw/howtoftv.aspx" target="_blank">如何收看民視</a></li>
-                        <li><a href="mailto:ftvnews53@gmail.com" target="_blank">意見信箱</a></li>
-                        <li><a href="https://www.ftv.com.tw/map.aspx" target="_blank">位置圖</a></li>
-                        <li><a href="https://www.ftv.com.tw/contactFTV.aspx" target="_blank">觀眾反映方式</a></li>
-                        <li><a href="https://www.ftv.com.tw/service/index.htm" target="_blank">觀眾來電反映</a></li>
-                        <li><a href="https://www.104.com.tw/company/18jsv9hc?jobsource=checkc" target="_blank">民視徵才</a></li>
-                        <li><a href="https://www.ftvnews.com.tw/privacy" target="_blank">隱私權政策</a></li>
-                    </ul>
-                    <div class="com-info">
-                        <p>觀眾服務中心│電話：(02)8601-8601</p>
-                        <p>信箱：service@ftv.com.tw│傳真：(02)8601-3955</p>
-                        <p>地址:244 新北市林口區信義路99號 電話:02-85118888 FAX:02-8601-3955</p>
-                    </div>
-                </li>
-            </ul>
-        </section>
-        <div class="copyright">
-            <div class="container"></div>
-            © 2021 FTV All Rights Reserved 版權所有‧盜用必究
-        </div>
-        <div class="interstitialAd">
-            <div class="interAd_cont container">
-                <div class="heading" id="interAd_heading"><%= Me.Lit_idleInfo.Text %></div>
-                <a class="interAd_close" id="interAd_close" href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a>
-            </div>
-            <div class="interAd_close interAd_bg"></div>
-        </div>
-        <input id="idleVal" class="d-none" value="<%= Me.Lit_TimeMine.Text %>">
-    </footer>
+    @await Component.InvokeAsync("Footer")
+
     <script src="https://cdn.ftvnews.com.tw/client/js/jquery-ui.min.js"></script>
     <script src="https://cdn.ftvnews.com.tw/client/js/bootstrap.min.js"></script>
     <script src="https://cdn.ftvnews.com.tw/client/js/jquery.lazy.min.js"></script>

@@ -9,7 +9,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<P_APIInfo>();
 builder.Services.AddHttpClient<F_httpPost>();
 builder.Services.AddScoped<HomeService>();
-builder.Services.AddScoped<InviteService>();
+builder.Services.AddScoped<FooterService>();
 builder.Services.AddSingleton<Now_date>();
 
 builder.Services.AddControllersWithViews();
