@@ -1,135 +1,275 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Net;
+using Newtonsoft.Json.Linq;
 using testFTV.Models.Home;
 
 namespace testFTV.Services
 {
   public class HomeService
   {
-    private readonly HttpClient _http;
     private readonly F_httpPost _httpPost;
-    private readonly P_APIInfo _apiInfo;
+    private readonly string _apiDomainV2;
 
     public HomeService(
-        HttpClient httpClient,
         F_httpPost httpPost,
         P_APIInfo apiInfo)
     {
-      _http = httpClient;
       _httpPost = httpPost;
-      _apiInfo = apiInfo;
+      _apiDomainV2 = apiInfo.UrlInfo(15);
     }
 
-    private async Task<JObject?> GetJson(string url)
+    private async Task<JObject?> GetApiJsonAsync(string relativePath, IDictionary<string, string>? query = null)
     {
-      var res = await _http.GetStringAsync(url);
-      if (string.IsNullOrEmpty(res))
-        return null;
+      var queryString = query == null || !query.Any()
+          ? string.Empty
+          : $"?{BuildQueryString(query)}";
 
-      return JObject.Parse(res);
-    }
-
-    public Task<IEnumerable<NewsItem>> LoadTextBasedGuide()
-    {
-      var items = new List<NewsItem>
-      {
-        new() { Title = "即時焦點 1", Url = "/news/guide-1" },
-        new() { Title = "即時焦點 2", Url = "/news/guide-2" },
-        new() { Title = "即時焦點 3", Url = "/news/guide-3" },
-      };
-
-      return Task.FromResult<IEnumerable<NewsItem>>(items);
-    }
-
-    public async Task<IEnumerable<NewsItem>> LoadHotNewsList()
-    {
-      try
-      {   
-      string apiDomain = _apiInfo.UrlInfo(15);
-      string requestUrl = $"{apiDomain}API/HotNewsList";
-
-      string response = await _httpPost.Get_HttpStatus(
+      var requestUrl = $"{_apiDomainV2}{relativePath}{queryString}";
+      var response = await _httpPost.Get_HttpStatus(
           requestUrl,
-          "application/json",
+          "application/x-www-form-urlencoded;charset=UTF-8",
           string.Empty,
           "GET",
           "200");
 
-      if (string.IsNullOrWhiteSpace(response))
+      if (string.IsNullOrWhiteSpace(response) || response.StartsWith("HTTP StatusCode"))
       {
-        return Enumerable.Empty<NewsItem>();
+        return null;
       }
 
-      var json = JObject.Parse(response);
-      var data = json["Data"] ?? json["data"] ?? json["Result"];
-
-      if (data == null || data.Type != JTokenType.Array)
+      try
       {
-        return Enumerable.Empty<NewsItem>();
+        return JObject.Parse(response);
       }
-
-      var items = new List<NewsItem>();
-
-      foreach (var entry in data)
+      catch
       {
-        string title = GetString(entry, "fsTitle", "fsTITLE", "title");
-        string url = GetString(entry, "fsUrl", "fsURL", "url", "linkUrl", "link");
+        return null;
+      }
+    }
 
-        if (!string.IsNullOrWhiteSpace(title))
+    private static string BuildQueryString(IDictionary<string, string> query)
+    {
+      return string.Join("&", query.Select(kv => $"{WebUtility.UrlEncode(kv.Key)}={WebUtility.UrlEncode(kv.Value)}"));
+    }
+
+    private static IEnumerable<JToken> GetItems(JObject json)
+    {
+      return json["ITEM"] is JArray arr ? arr : Enumerable.Empty<JToken>();
+    }
+
+    private static string FirstNonEmpty(JToken token, params string[] propertyNames)
+    {
+      foreach (var name in propertyNames)
+      {
+        var value = token?[name];
+        if (value != null && value.Type != JTokenType.Null)
         {
-          items.Add(new NewsItem
+          var str = value.ToString();
+          if (!string.IsNullOrWhiteSpace(str))
           {
-            Title = title,
-            Url = string.IsNullOrWhiteSpace(url) ? "/" : url
-          });
+            return str;
+          }
         }
       }
 
-      return items;
+      return string.Empty;
     }
-      catch
+
+    private async Task<IEnumerable<JToken>> LoadHotNewsRawAsync(int type, int sp)
+    {
+      var json = await GetApiJsonAsync(
+          "API/FtvGetHotNewsWeb.aspx",
+          new Dictionary<string, string>
+          {
+            ["Type"] = type.ToString(),
+            ["Sp"] = sp.ToString(),
+          });
+
+      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return Enumerable.Empty<JToken>();
+      }
+
+      return GetItems(json);
+    }
+
+    public async Task<IEnumerable<NewsItem>> LoadTextBasedGuide()
+    {
+      var json = await GetApiJsonAsync(
+          "API/ArticleMenuImage.aspx",
+          new Dictionary<string, string> { ["kind"] = "y" });
+
+      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
       {
         return Enumerable.Empty<NewsItem>();
       }
-}
 
-private static string GetString(JToken token, params string[] propertyNames)
-{
-  foreach (var name in propertyNames)
-  {
-    var value = token?[name];
-    if (value != null && value.Type != JTokenType.Null)
+      return GetItems(json)
+          .Select(item => new NewsItem
+          {
+            Title = FirstNonEmpty(item, "Title", "title"),
+            Url = FirstNonEmpty(item, "links", "link", "url"),
+            ImageUrl = FirstNonEmpty(item, "image", "Image"),
+          })
+          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+    }
+
+    public async Task<IEnumerable<NewsItem>> LoadHotNewsList()
     {
-      var str = value.ToString();
-      if (!string.IsNullOrWhiteSpace(str))
+      var json = await GetApiJsonAsync("API/HotNews.aspx");
+      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
       {
-        return str;
+        return Enumerable.Empty<NewsItem>();
       }
+
+      return GetItems(json)
+          .Select(item => new NewsItem
+          {
+            Title = FirstNonEmpty(item, "Title", "TitleShort", "fsTitle"),
+            ShortTitle = FirstNonEmpty(item, "TitleShort"),
+            Url = FirstNonEmpty(item, "links", "link", "url"),
+            TimeText = FirstNonEmpty(item, "CreateDate"),
+          })
+          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+    }
+
+    public async Task<IEnumerable<NewsItem>> LoadFocusNewsList()
+    {
+      var items = await LoadHotNewsRawAsync(1, 15);
+
+      return items
+          .Select(item => new NewsItem
+          {
+            Title = FirstNonEmpty(item, "Title", "TitleShort"),
+            ShortTitle = FirstNonEmpty(item, "TitleShort", "Title"),
+            Url = $"/news/detail/{FirstNonEmpty(item, "ID")}",
+            ImageUrl = FirstNonEmpty(item, "Image"),
+          })
+          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+    }
+
+    public async Task<IEnumerable<NewsItem>> LoadHotNewList()
+    {
+      var items = await LoadHotNewsRawAsync(1, 25);
+
+      return items
+          .Skip(15)
+          .Take(10)
+          .Select(item => new NewsItem
+          {
+            Title = FirstNonEmpty(item, "TitleShort", "Title"),
+            ShortTitle = FirstNonEmpty(item, "TitleShort", "Title"),
+            Url = $"/news/detail/{FirstNonEmpty(item, "ID")}",
+          })
+          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+    }
+
+    public async Task<(SectionModel D1, SectionModel D2, SectionModel D3)> LoadRealtime()
+    {
+      var defaultSection = new SectionModel { SectionTitle = "即時新聞" };
+
+      var json = await GetApiJsonAsync(
+          "API/realtime_List_Home.aspx",
+          new Dictionary<string, string>
+          {
+            ["PageSize"] = "15",
+            ["Page"] = "1",
+          });
+
+      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return (defaultSection, defaultSection, defaultSection);
+      }
+
+      var allItems = GetItems(json)
+          .Select(item => new NewsItem
+          {
+            Title = FirstNonEmpty(item, "TitleShort", "Title"),
+            ShortTitle = FirstNonEmpty(item, "TitleShort", "Title"),
+            Url = $"/news/detail/{FirstNonEmpty(item, "ID")}",
+            ImageUrl = FirstNonEmpty(item, "Image"),
+            TimeText = FirstNonEmpty(item, "CreateDate"),
+          })
+          .Where(i => !string.IsNullOrWhiteSpace(i.Title))
+          .ToList();
+
+      var d1Items = new List<NewsItem>();
+      var d2Items = new List<NewsItem>();
+      var d3Items = new List<NewsItem>();
+
+      if (allItems.Count > 0) d1Items.Add(allItems[0]);
+      if (allItems.Count > 1) d2Items.Add(allItems[1]);
+      if (allItems.Count > 2) d3Items.Add(allItems[2]);
+
+      for (int i = 3; i < allItems.Count; i++)
+      {
+        if (i >= 3 && i <= 6)
+        {
+          d1Items.Add(allItems[i]);
+        }
+        else if (i >= 7 && i <= 10)
+        {
+          d2Items.Add(allItems[i]);
+        }
+        else
+        {
+          d3Items.Add(allItems[i]);
+        }
+      }
+
+      var d1 = new SectionModel
+      {
+        SectionTitle = d1Items.FirstOrDefault()?.Title ?? "即時新聞",
+        Items = d1Items,
+      };
+
+      var d2 = new SectionModel
+      {
+        SectionTitle = d2Items.FirstOrDefault()?.Title ?? "即時新聞",
+        Items = d2Items,
+      };
+
+      var d3 = new SectionModel
+      {
+        SectionTitle = d3Items.FirstOrDefault()?.Title ?? "即時新聞",
+        Items = d3Items,
+      };
+
+      return (d1, d2, d3);
+    }
+
+    public async Task<IEnumerable<ImageCarouselItem>> LoadCarouselImages()
+    {
+      var json = await GetApiJsonAsync("API/CarouselImage.aspx");
+      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return Enumerable.Empty<ImageCarouselItem>();
+      }
+
+      return GetItems(json)
+          .Select(item => new ImageCarouselItem
+          {
+            ImageUrl = FirstNonEmpty(item, "image", "Image"),
+            LinkUrl = FirstNonEmpty(item, "links", "link", "url"),
+          })
+          .Where(i => !string.IsNullOrWhiteSpace(i.ImageUrl));
+    }
+
+    public async Task<IEnumerable<AnchorItem>> LoadAnchorList()
+    {
+      var json = await GetApiJsonAsync("API/AnchorList.aspx");
+      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return Enumerable.Empty<AnchorItem>();
+      }
+
+      return GetItems(json)
+          .Select(item => new AnchorItem
+          {
+            Name = FirstNonEmpty(item, "Title", "Name"),
+            ImageUrl = FirstNonEmpty(item, "Image", "image"),
+            Url = $"/anchor/detail/{FirstNonEmpty(item, "ID")}",
+          })
+          .Where(a => !string.IsNullOrWhiteSpace(a.Name));
     }
   }
-
-  return string.Empty;
 }
-
-    public Task<IEnumerable<NewsItem>> LoadFocusNewsList()
-    {
-      var items = new List<NewsItem>
-      {
-        new() { Title = "焦點新聞 1", Url = "/news/focus-1" },
-        new() { Title = "焦點新聞 2", Url = "/news/focus-2" },
-        new() { Title = "焦點新聞 3", Url = "/news/focus-3" },
-      };
-
-      return Task.FromResult<IEnumerable<NewsItem>>(items);
-    }
-
-    public Task<IEnumerable<NewsItem>> LoadHotNewList()
-    {
-      var items = new List<NewsItem>
-      {
-        new() { Title = "熱門報導 1", Url = "/news/hotnew-1" },
-        new() { Title = "熱門報導 2", Url = "/news/hotnew-2" },
-        new() { Title = "熱門報導 3", Url = "/news/hotnew-3" },
-      };
-
-      return Task.FromResult<IEnumerable<NewsItem>>(items);
-    }

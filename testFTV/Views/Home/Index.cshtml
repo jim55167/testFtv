@@ -1,6 +1,4 @@
-﻿@model testFTV.Models.Home.HomeIndexViewModel
-
-@{
+﻿@{
     ViewData["Title"] = "民視新聞網 - 24小時不間斷專業新聞服務";
 }
 
@@ -17,8 +15,15 @@
             <ul class="marquee-carousel swiper-wrapper">
                 @foreach (var news in Model.HotNewsList)
                 {
+                    var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
                     <li class="swiper-slide">
-                        <a href="@news.Url">@news.Title</a>
+                        <a href="@news.Url">
+                            <span class="mr-2">@displayTitle</span>
+                            @if (!string.IsNullOrWhiteSpace(news.TimeText))
+                            {
+                                <small class="text-muted">@news.TimeText</small>
+                            }
+                        </a>
                     </li>
                 }
             </ul>
@@ -31,8 +36,15 @@
         <ul class="focus-carousel swiper-wrapper">
             @foreach (var news in Model.FocusNewsList)
             {
+                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
                 <li class="swiper-slide">
-                    <a href="@news.Url">@news.Title</a>
+                    <a href="@news.Url" class="d-flex align-items-center">
+                        @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
+                        {
+                            <img class="mr-2" src="@news.ImageUrl" alt="@displayTitle" style="max-width:140px; height:auto;" />
+                        }
+                        <span>@displayTitle</span>
+                    </a>
                 </li>
             }
         </ul>
@@ -42,7 +54,8 @@
         <ul>
             @foreach (var news in Model.HotNewList)
             {
-                <li><a href="@news.Url">@news.Title</a></li>
+                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
+                <li><a href="@news.Url">@displayTitle</a></li>
             }
         </ul>
     </div>
@@ -70,37 +83,5 @@
                 }
             </ul>
         </div>
-
-        <div class="col-md-4">
-            <h3>@Model.D3.SectionTitle</h3>
-            <ul>
-                @foreach (var n in Model.D3.Items)
-                {
-                    <li><a href="@n.Url">@n.Title</a></li>
-                }
-            </ul>
-        </div>
-
     </div>
-</section>
-
-<div class="swiper-article">
-    @foreach (var img in Model.CarouselImages)
-    {
-        <a href="@img.LinkUrl"><img src="@img.ImageUrl" /></a>
-    }
-</div>
-
-<section class="row">
-    <ul class="anchor-carousel swiper-wrapper">
-        @foreach (var a in Model.AnchorList)
-        {
-            <li class="swiper-slide">
-                <a href="@a.Url">
-                    <img src="@a.ImageUrl" alt="@a.Name" />
-                    <div>@a.Name</div>
-                </a>
-            </li>
-        }
-    </ul>
 </section>
