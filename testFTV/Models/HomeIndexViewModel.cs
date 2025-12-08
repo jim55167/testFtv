@@ -1,4 +1,4 @@
-﻿namespace testFTV.Models.Home
+﻿namespace testFTV.Models
 {
   public class HomeIndexViewModel
   {

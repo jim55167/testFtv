@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using testFTV.Models.Footer;
+using testFTV.Models;
 using testFTV.Services;
 
 namespace testFTV.ViewComponents

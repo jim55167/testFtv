@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Newtonsoft.Json.Linq;
-using testFTV.Models.Home;
+using testFTV.Models;
 
 namespace testFTV.Services
 {

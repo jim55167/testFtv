@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using testFTV.Models;
-using testFTV.Models.Home;
 using testFTV.Services;
 
 namespace testFTV.Controllers

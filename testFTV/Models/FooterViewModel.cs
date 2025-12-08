@@ -1,4 +1,4 @@
-﻿namespace testFTV.Models.Footer
+﻿namespace testFTV.Models
 {
   public class FooterViewModel
   {
