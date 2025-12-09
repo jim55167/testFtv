@@ -8,6 +8,8 @@ namespace testFTV.Services
   public class F_httpPost
   {
     private readonly HttpClient _http;
+    private const string SubscriptionKey = "6943273d194a4d6e9852d021645ebb69";
+    private const string TokenKey = "1QAZ0OKM2WSX9IJN3EDC8UHBftv8859";
 
     public F_httpPost(HttpClient httpClient)
     {
@@ -67,23 +69,8 @@ namespace testFTV.Services
         string httpMethod,
         string expectedCode = "200")
     {
-      var msg = new HttpRequestMessage(new HttpMethod(httpMethod), url);
-
-      msg.Headers.Add("User-Agent", "Mozilla/5.0");
-      msg.Headers.Add("Accept", "*/*");
-      msg.Headers.Add("Accept-Encoding", "gzip,deflate");
-
-      if (!string.IsNullOrEmpty(authorization))
-      {
-        msg.Headers.Add("Authorization", authorization);
-      }
-
-      msg.Headers.Add("Ocp-Apim-Subscription-Key", "6943273d194a4d6e9852d021645ebb69");
-
-      if (httpMethod == "POST")
-      {
-        msg.Content = new StringContent(postParams ?? "", Encoding.UTF8, contentType);
-      }
+      var msg = BuildRequest(url, contentType, authorization, postParams, httpMethod);
+      msg.Headers.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
 
       var response = await _http.SendAsync(msg);
       string result = await response.Content.ReadAsStringAsync();
@@ -128,16 +115,34 @@ namespace testFTV.Services
         string httpMethod,
         string expectedCode = "200")
     {
-      var msg = new HttpRequestMessage(new HttpMethod(httpMethod), url);
+      var msg = BuildRequest(url, contentType, null, postParams, httpMethod);
+      msg.Headers.Add("TokenKey", TokenKey);
 
-      msg.Headers.Add("User-Agent", "Mozilla/5.0");
-      msg.Headers.Add("Accept", "*/*");
-      msg.Headers.Add("Accept-Encoding", "gzip,deflate");
-      msg.Headers.Add("TokenKey", "1QAZ0OKM2WSX9IJN3EDC8UHBftv8859");
+      var res = await _http.SendAsync(msg);
+      string content = await res.Content.ReadAsStringAsync();
 
-      if (httpMethod == "POST")
+      if (((int)res.StatusCode).ToString() != expectedCode)
       {
-        msg.Content = new StringContent(postParams ?? "", Encoding.UTF8, contentType);
+        return $"HTTP StatusCode 不符合規則，預期: {expectedCode}，實際: {(int)res.StatusCode}";
+      }
+
+      return content;
+    }
+
+    public async Task<string> SendWithHeaders(
+      string url,
+      string contentType,
+      string postParams,
+      string httpMethod,
+      IDictionary<string, string> headers,
+      string expectedCode = "200")
+    {
+      var msg = BuildRequest(url, contentType, null, postParams, httpMethod);
+
+      foreach (var header in headers)
+      {
+        msg.Headers.Remove(header.Key);
+        msg.Headers.Add(header.Key, header.Value);
       }
 
       var res = await _http.SendAsync(msg);
@@ -149,6 +154,32 @@ namespace testFTV.Services
       }
 
       return content;
+    }
+
+    private static HttpRequestMessage BuildRequest(
+        string url,
+        string contentType,
+        string authorization,
+        string postParams,
+        string httpMethod)
+    {
+      var msg = new HttpRequestMessage(new HttpMethod(httpMethod), url);
+
+      msg.Headers.Add("User-Agent", "Mozilla/5.0");
+      msg.Headers.Add("Accept", "*/*");
+      msg.Headers.Add("Accept-Encoding", "gzip,deflate");
+
+      if (!string.IsNullOrEmpty(authorization))
+      {
+        msg.Headers.Add("Authorization", authorization);
+      }
+
+      if (httpMethod == "POST")
+      {
+        msg.Content = new StringContent(postParams ?? "", Encoding.UTF8, contentType);
+      }
+
+      return msg;
     }
   }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using testFTV.Models;
 
@@ -24,11 +25,16 @@ namespace testFTV.Services
           : $"?{BuildQueryString(query)}";
 
       var requestUrl = $"{_apiDomainV2}{relativePath}{queryString}";
-      var response = await _httpPost.Get_HttpStatus(
+      var response = await _httpPost.SendWithHeaders(
           requestUrl,
           "application/x-www-form-urlencoded;charset=UTF-8",
           string.Empty,
           "GET",
+          new Dictionary<string, string>
+          {
+            ["TokenKey"] = "1QAZ0OKM2WSX9IJN3EDC8UHBftv8859",
+            ["Ocp-Apim-Subscription-Key"] = "6943273d194a4d6e9852d021645ebb69",
+          },
           "200");
 
       if (string.IsNullOrWhiteSpace(response) || response.StartsWith("HTTP StatusCode"))
