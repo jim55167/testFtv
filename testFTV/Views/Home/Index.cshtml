@@ -1,4 +1,4 @@
-﻿@model testFTV.Models.HomeIndexViewModel
+﻿@model testFTV.Models.HomeIndex
 
 @{
     ViewData["Title"] = "民視新聞網 - 24小時不間斷專業新聞服務";
@@ -95,18 +95,28 @@
 <section class="container mt-20">
     <h3>主播群</h3>
     <div class="row">
-        @for (var i = 0; i < anchors.Count; i++)
+        <div class="text-muted">
+            AnchorList Count = @(Model.AnchorList?.Count() ?? 0)
+        </div>
+        @if (anchors.Count == 0)
         {
-            var anchor = anchors[i];
-            <div class="col-md-3 mb-3 text-center">
-                <a href="@anchor.Url">
-                    @if (!string.IsNullOrWhiteSpace(anchor.ImageUrl))
-                    {
-                        <img src="@anchor.ImageUrl" alt="@anchor.Name" class="img-fluid mb-2" />
-                    }
-                    <div>@anchor.Name</div>
-                </a>
-            </div>
+            <div class="col-12 text-center text-muted">尚無主播資料</div>
+        }
+        else
+        {
+            @for (var i = 0; i < anchors.Count; i++)
+            {
+                var anchor = anchors[i];
+                <div class="col-md-3 mb-3 text-center">
+                    <a href="@anchor.Url">
+                        @if (!string.IsNullOrWhiteSpace(anchor.ImageUrl))
+                        {
+                            <img src="@anchor.ImageUrl" alt="@anchor.Name" class="img-fluid mb-2" />
+                        }
+                        <div>@anchor.Name</div>
+                    </a>
+                </div>
+            }
         }
     </div>
 </section>

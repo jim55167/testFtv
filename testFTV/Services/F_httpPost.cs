@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -167,7 +168,6 @@ namespace testFTV.Services
 
       msg.Headers.Add("User-Agent", "Mozilla/5.0");
       msg.Headers.Add("Accept", "*/*");
-      msg.Headers.Add("Accept-Encoding", "gzip,deflate");
 
       if (!string.IsNullOrEmpty(authorization))
       {

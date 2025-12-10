@@ -14,9 +14,9 @@ namespace testFTV.Services
       _apiDomain = apiInfo.UrlInfo(12);
     }
 
-    public async Task<FooterViewModel> LoadIdleInfoAsync()
+    public async Task<FooterModel> LoadIdleInfoAsync()
     {
-      var model = new FooterViewModel();
+      var model = new FooterModel();
       var requestUrl = $"{_apiDomain}API/ConfigInfo.aspx";
 
       var resultString = await _httpPost.get_RemoteDataHttpStatus(

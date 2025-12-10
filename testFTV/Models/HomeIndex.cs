@@ -1,6 +1,6 @@
 ﻿namespace testFTV.Models
 {
-  public class HomeIndexViewModel
+  public class HomeIndex
   {
     public IEnumerable<NewsItem> TextBasedGuide { get; set; } = Enumerable.Empty<NewsItem>();
     public IEnumerable<NewsItem> HotNewsList { get; set; } = Enumerable.Empty<NewsItem>();

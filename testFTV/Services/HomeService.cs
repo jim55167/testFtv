@@ -25,6 +25,7 @@ namespace testFTV.Services
           : $"?{BuildQueryString(query)}";
 
       var requestUrl = $"{_apiDomainV2}{relativePath}{queryString}";
+
       var response = await _httpPost.SendWithHeaders(
           requestUrl,
           "application/x-www-form-urlencoded;charset=UTF-8",
@@ -37,17 +38,20 @@ namespace testFTV.Services
           },
           "200");
 
+
       if (string.IsNullOrWhiteSpace(response) || response.StartsWith("HTTP StatusCode"))
-      {
+      {       
         return null;
       }
 
       try
-      {
+      { 
         return JObject.Parse(response);
       }
-      catch
+      catch (Exception ex)
       {
+        Console.WriteLine("JSON parse error: " + ex.Message);
+        Console.WriteLine("Response head: " + response.Substring(0, Math.Min(response.Length, 200)));
         return null;
       }
     }
@@ -263,7 +267,20 @@ namespace testFTV.Services
     public async Task<IEnumerable<AnchorItem>> LoadAnchorList()
     {
       var json = await GetApiJsonAsync("API/AnchorList.aspx");
-      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      Console.WriteLine("bbbbbbb" + json);
+      if (json == null)
+      {
+        Console.WriteLine("AnchorList: json == null");
+        return Enumerable.Empty<AnchorItem>();
+      }
+
+      Console.WriteLine("AnchorList raw json:");
+      Console.WriteLine(json.ToString());
+
+      var status = json["Status"]?.ToString();
+      Console.WriteLine($"AnchorList Status = {status}");
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
       {
         return Enumerable.Empty<AnchorItem>();
       }

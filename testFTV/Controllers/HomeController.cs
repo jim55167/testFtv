@@ -7,9 +7,9 @@ namespace testFTV.Controllers
 {
   public class HomeController : Controller
   {
-    private readonly HomeService _service;
+    private readonly Services.HomeService _service;
 
-    public HomeController(HomeService service)
+    public HomeController(Services.HomeService service)
     {
       _service = service;
     }
@@ -18,7 +18,7 @@ namespace testFTV.Controllers
     {
       var realtime = await _service.LoadRealtime();
 
-      var vm = new HomeIndexViewModel
+      var vm = new HomeIndex
       {
         TextBasedGuide = await _service.LoadTextBasedGuide(),
         HotNewsList = await _service.LoadHotNewsList(),
@@ -42,7 +42,7 @@ namespace testFTV.Controllers
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-      return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+      return View(new Error { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
   }
 }

@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using testFTV.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Dependency Injection
 // --------------------------------------
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<P_APIInfo>();
 builder.Services.AddHttpClient<F_httpPost>();
+builder.Services.AddSingleton<P_APIInfo>();
 builder.Services.AddScoped<HomeService>();
 builder.Services.AddScoped<FooterService>();
 builder.Services.AddSingleton<Now_date>();

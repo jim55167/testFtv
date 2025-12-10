@@ -4,18 +4,18 @@ using testFTV.Services;
 
 namespace testFTV.ViewComponents
 {
-  public class FooterViewComponent : ViewComponent
+  public class Footer : ViewComponent
   {
-    private readonly FooterService _footerService;
+    private readonly Services.FooterService _footerService;
 
-    public FooterViewComponent(FooterService footerService)
+    public Footer(Services.FooterService footerService)
     {
       _footerService = footerService;
     }
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-      FooterViewModel model = await _footerService.LoadIdleInfoAsync();
+      Models.FooterModel model = await _footerService.LoadIdleInfoAsync();
       return View(model);
     }
   }
