@@ -18,47 +18,9 @@ namespace testFTV.Services
       _apiDomainV2 = apiInfo.UrlInfo(15);
     }
 
-    private async Task<JObject?> GetApiJsonAsync(string relativePath, IDictionary<string, string>? query = null)
+    private Task<JObject?> GetApiJsonAsync(string relativePath, IDictionary<string, string>? query = null)
     {
-      var queryString = query == null || !query.Any()
-          ? string.Empty
-          : $"?{BuildQueryString(query)}";
-
-      var requestUrl = $"{_apiDomainV2}{relativePath}{queryString}";
-
-      var response = await _httpPost.SendWithHeaders(
-          requestUrl,
-          "application/x-www-form-urlencoded;charset=UTF-8",
-          string.Empty,
-          "GET",
-          new Dictionary<string, string>
-          {
-            ["TokenKey"] = "1QAZ0OKM2WSX9IJN3EDC8UHBftv8859",
-            ["Ocp-Apim-Subscription-Key"] = "6943273d194a4d6e9852d021645ebb69",
-          },
-          "200");
-
-
-      if (string.IsNullOrWhiteSpace(response) || response.StartsWith("HTTP StatusCode"))
-      {       
-        return null;
-      }
-
-      try
-      { 
-        return JObject.Parse(response);
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine("JSON parse error: " + ex.Message);
-        Console.WriteLine("Response head: " + response.Substring(0, Math.Min(response.Length, 200)));
-        return null;
-      }
-    }
-
-    private static string BuildQueryString(IDictionary<string, string> query)
-    {
-      return string.Join("&", query.Select(kv => $"{WebUtility.UrlEncode(kv.Key)}={WebUtility.UrlEncode(kv.Value)}"));
+      return _httpPost.GetApiJsonAsync(_apiDomainV2, relativePath, query);
     }
 
     private static IEnumerable<JToken> GetItems(JObject json)

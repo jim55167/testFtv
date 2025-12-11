@@ -1,0 +1,93 @@
+﻿@model MenuModel
+
+<!-- start: Fixed navbar-->
+<div class="side-menu">
+  <nav class="navbar navbar-expand-xl fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button
+          class="navbar-toggle collapsed"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarCollapse"
+          aria-controls="navbarCollapse"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <div class="icon-bar"></div>
+          <div class="icon-bar"></div>
+          <div class="icon-bar"></div>
+        </button>
+        <a class="navbar-brand" href="/">
+          <div class="logo"></div>
+        </a>
+        <a class="search-mobile d-flex d-lg-none" href="javascript:;" data-toggle="modal" data-target="#search"><i class="fas fa-fw fa-search fa-lg"></i></a>
+        <div class="side-menu-container">
+          <ul class="nav-secondary">
+            <li class="search">
+              <a href="javascript:;" data-toggle="modal" data-target="#search"><i class="fas fa-fw fa-search fa-lg"></i><span>搜尋</span></a>
+            </li>
+            <li class="live">
+              <a href="/live/live-channel">
+                <i class="fas fa-tv-retro fa-lg"></i>
+                <span>直播</span>
+              </a>
+            </li>
+            <li class="send">
+              <a href="https://www.messenger.com/t/ftvnews53" target="_blank"><i class="fas fa-fw fa-paper-plane fa-lg"></i><span>爆料</span></a>
+            </li>
+            <li class="facebook">
+              <a href="https://www.facebook.com/ftvnews53" target="_blank"><i class="fab fa-fw fa-facebook-f fa-lg"></i><span>facebook粉絲團</span></a>
+            </li>
+            <li class="twitter">
+              <a href="https://twitter.com/FormosaTVNews" target="_blank"><i class="fab fa-square-x-twitter fa-lg"></i><span>民視新聞twitter</span></a>
+            </li>
+            <li class="android">
+              <a href="https://play.google.com/store/apps/details?id=com.formosatv.ftvnews" target="_blank"><i class="fab fa-fw fa-android fa-lg"></i><span>下載 Android APP</span></a>
+            </li>
+            <li class="ios">
+              <a href="https://apps.apple.com/tw/app/id853490128" target="_blank"><i class="fab fa-fw fa-apple fa-lg"></i><span>下載 iPhone APP</span></a>
+            </li>
+            <!-- start:可以自訂連結-->
+            <asp:Literal ID="Lit_Community" runat="server"></asp:Literal>
+            <!-- End:可以自訂連結-->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- /.navbar-->
+
+  <div class="modal fade" id="search" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="navbar-brand" href="javascript:;">
+            <div class="logo"></div>
+          </div>
+          <a id="search-close" href="javascript:;" data-dismiss="modal"><i class="fas fa-times"></i></a>
+        </div>
+        <div class="modal-body">
+          <div class="search-form">
+            <asp:TextBox ID="searchInput1" CssClass="search-input" ClientIDMode="Static" TextMode="Search" placeholder="搜尋" runat="server"></asp:TextBox>
+            <asp:Button ID="searchButton1" runat="server" Text="Search" OnClick="SearchButton1_Click" style="display:none;" />
+          </div>
+          <div class="mx-auto searchText-box">
+            <p id="searchText" class="text-left mb-0"></p>
+          </div>
+          <ul class="search-keyword clearfix">
+            <asp:Literal ID="Lit_SearchKeyConfig" runat="server"></asp:Literal>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<nav class="nav-classify mainmenu-area">
+  <div class="nav-classify-inside nav-classify-other" id="menuNav">
+    <ul class="MenuList">
+      <asp:Literal ID="Lit_ArticleMenu" runat="server"></asp:Literal>
+    </ul>
+  </div>
+</nav>

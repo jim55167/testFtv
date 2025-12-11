@@ -1,5 +1,6 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -156,6 +157,58 @@ namespace testFTV.Services
 
       return content;
     }
+
+    public async Task<JObject?> GetApiJsonAsync(
+    string baseUrl,
+    string relativePath,
+    IDictionary<string, string>? query = null,
+    string httpMethod = "GET",
+    string contentType = "application/x-www-form-urlencoded;charset=UTF-8",
+    string postParams = "",
+    string expectedCode = "200")
+    {
+      // 組 QueryString
+      var queryString = query == null || !query.Any()
+          ? string.Empty
+          : "?" + string.Join("&", query.Select(kv =>
+              $"{WebUtility.UrlEncode(kv.Key)}={WebUtility.UrlEncode(kv.Value)}"));
+
+      // 組完整 URL（避免重複或缺少斜線）
+      var url = $"{baseUrl.TrimEnd('/')}/{relativePath.TrimStart('/')}{queryString}";
+
+      // 統一帶上 TokenKey + SubscriptionKey
+      var headers = new Dictionary<string, string>
+      {
+        ["TokenKey"] = TokenKey,
+        ["Ocp-Apim-Subscription-Key"] = SubscriptionKey,
+      };
+
+      var response = await SendWithHeaders(
+          url,
+          contentType,
+          postParams,
+          httpMethod,
+          headers,
+          expectedCode);
+
+      if (string.IsNullOrWhiteSpace(response) || response.StartsWith("HTTP StatusCode"))
+      {
+        return null;
+      }
+
+      try
+      {
+        return JObject.Parse(response);
+      }
+      catch (Exception ex)
+      {
+        // 之後可以改成你的正式 logging
+        Console.WriteLine("JSON parse error: " + ex.Message);
+        Console.WriteLine("Response head: " + response.Substring(0, Math.Min(response.Length, 200)));
+        return null;
+      }
+    };
+
 
     private static HttpRequestMessage BuildRequest(
         string url,
