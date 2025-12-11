@@ -12,6 +12,7 @@ builder.Services.AddHttpClient<F_httpPost>();
 builder.Services.AddSingleton<P_APIInfo>();
 builder.Services.AddScoped<HomeService>();
 builder.Services.AddScoped<FooterService>();
+builder.Services.AddScoped<MenuService>();
 builder.Services.AddSingleton<Now_date>();
 
 builder.Services.AddControllersWithViews();

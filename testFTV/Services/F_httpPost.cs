@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -202,12 +201,10 @@ namespace testFTV.Services
       }
       catch (Exception ex)
       {
-        // 之後可以改成你的正式 logging
         Console.WriteLine("JSON parse error: " + ex.Message);
-        Console.WriteLine("Response head: " + response.Substring(0, Math.Min(response.Length, 200)));
         return null;
       }
-    };
+    }
 
 
     private static HttpRequestMessage BuildRequest(
