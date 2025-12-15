@@ -33,90 +33,164 @@
     </div>
 </div>
 
-<div class="cover-main cover-bg">
-    <div class="cover-left">
-        <ul class="focus-carousel swiper-wrapper">
-            @foreach (var news in Model.FocusNewsList)
-            {
-                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                <li class="swiper-slide">
-                    <a href="@news.Url" class="d-flex align-items-center">
-                        @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
-                        {
-                            <img class="mr-2" src="@news.ImageUrl" alt="@displayTitle" style="max-width:140px; height:auto;" />
-                        }
-                        <span>@displayTitle</span>
-                    </a>
-                </li>
-            }
-        </ul>
-    </div>
+<div class="row">
+    <div class="col-main">
+        <div class="cover-main cover-bg">
+            <div class="cover-left focus-news swiper-container">
+                <div class="cover-left">
+                    <div class="focus-news swiper-container">
+                        <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
+                        <ul class="focus-carousel swiper-wrapper">
+                            @foreach (var news in Model.FocusNewsList)
+                            {
+                                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
+                                <li class="swiper-slide">
+                                    <a href="@news.Url">
+                                        @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
+                                        {
+                                            <span class="img-block">
+                                                <img src="@news.ImageUrl" alt="@displayTitle" />
+                                            </span>
+                                        }
+                                        <span class="content">
+                                            <span class="title">@displayTitle</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
 
-    <div class="cover-right">
-        <ul>
-            @foreach (var news in Model.HotNewList)
-            {
-                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                <li><a href="@news.Url">@displayTitle</a></li>
-            }
-        </ul>
+                <div class="cover-right">
+                    <div class="top-news">
+                        <div class="heading">
+                            <div class="title">
+                                <a class="d-block text-white" href="/popular/">熱門新聞</a>
+                            </div>
+                        </div>
+                        <ul>
+                            @foreach (var news in Model.HotNewList)
+                            {
+                                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
+                                <li><a href="@news.Url">@displayTitle</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-20">
+            <div class="col-12">
+                <div class="live-block">
+                    <div class="live-player">
+                        <div id="top-live"></div>
+                    </div>
+                    <div class="live-channel living">
+                        <div class="heading">
+                            <div class="title">正在直播</div>
+                        </div>
+                        <div class="nicescroll">
+                            <ul id="living-list" class="row"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="container mt-20">
+            <div class="row">
+                <div class="heading">
+                    <div class="title">
+                        <a class="d-block text-pink" href="/realtime/">即時新聞</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class='col-md-4 col-sm-6 button-buffer'>
+                    @* <asp:Literal ID="Lit_d1_st" runat="server"></asp:Literal> *@
+                    <div class='index-news-list'>
+                        <ul>
+                            @* <asp:Literal ID="Lit_d1_list" runat="server"></asp:Literal> *@
+                        </ul>
+                    </div>
+                </div>
+                <div class='col-md-4 col-sm-6 button-buffer'>
+                    @* <asp:Literal ID="Lit_d2_st" runat="server"></asp:Literal> *@
+                    <div class='index-news-list'>
+                        <ul>
+                            @* <asp:Literal ID="Lit_d2_list" runat="server"></asp:Literal> *@
+                        </ul>
+                    </div>
+                </div>
+                <div class='col-md-4 col-sm-6 button-buffer'>
+                    @* <asp:Literal ID="Lit_d3_st" runat="server"></asp:Literal> *@
+                    <div class='index-news-list'>
+                        <ul>
+                            @* <asp:Literal ID="Lit_d3_list" runat="server"></asp:Literal> *@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container mt-20">
+            <div class="row">
+                <div class="col-md-4">
+                    <h3>@Model.D1.SectionTitle</h3>
+                    <ul>
+                        @foreach (var n in Model.D1.Items)
+                        {
+                            <li><a href="@n.Url">@n.Title</a></li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-md-4">
+                    <h3>@Model.D2.SectionTitle</h3>
+                    <ul>
+                        @foreach (var n in Model.D2.Items)
+                        {
+                            <li><a href="@n.Url">@n.Title</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        @{
+            var anchors = Model.AnchorList?.ToList() ?? new List<testFTV.Models.AnchorItem>();
+        }
+
+        <section class="container mt-20">
+            <h3>主播群</h3>
+            <div class="row">
+                <div class="text-muted">
+                    AnchorList Count = @(Model.AnchorList?.Count() ?? 0)
+                </div>
+                @if (anchors.Count == 0)
+                {
+                    <div class="col-12 text-center text-muted">尚無主播資料</div>
+                }
+                else
+                {
+                    @for (var i = 0; i < anchors.Count; i++)
+                    {
+                        var anchor = anchors[i];
+                        <div class="col-md-3 mb-3 text-center">
+                            <a href="@anchor.Url">
+                                @if (!string.IsNullOrWhiteSpace(anchor.ImageUrl))
+                                {
+                                    <img src="@anchor.ImageUrl" alt="@anchor.Name" class="img-fluid mb-2" />
+                                }
+                                <div>@anchor.Name</div>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
     </div>
 </div>
-
-<section class="container mt-20">
-    <div class="row">
-
-        <div class="col-md-4">
-            <h3>@Model.D1.SectionTitle</h3>
-            <ul>
-                @foreach (var n in Model.D1.Items)
-                {
-                    <li><a href="@n.Url">@n.Title</a></li>
-                }
-            </ul>
-        </div>
-
-        <div class="col-md-4">
-            <h3>@Model.D2.SectionTitle</h3>
-            <ul>
-                @foreach (var n in Model.D2.Items)
-                {
-                    <li><a href="@n.Url">@n.Title</a></li>
-                }
-            </ul>
-        </div>
-    </div>
-</section>
-
-@{
-    var anchors = Model.AnchorList?.ToList() ?? new List<testFTV.Models.AnchorItem>();
-}
-
-<section class="container mt-20">
-    <h3>主播群</h3>
-    <div class="row">
-        <div class="text-muted">
-            AnchorList Count = @(Model.AnchorList?.Count() ?? 0)
-        </div>
-        @if (anchors.Count == 0)
-        {
-            <div class="col-12 text-center text-muted">尚無主播資料</div>
-        }
-        else
-        {
-            @for (var i = 0; i < anchors.Count; i++)
-            {
-                var anchor = anchors[i];
-                <div class="col-md-3 mb-3 text-center">
-                    <a href="@anchor.Url">
-                        @if (!string.IsNullOrWhiteSpace(anchor.ImageUrl))
-                        {
-                            <img src="@anchor.ImageUrl" alt="@anchor.Name" class="img-fluid mb-2" />
-                        }
-                        <div>@anchor.Name</div>
-                    </a>
-                </div>
-            }
-        }
-    </div>
-</section>
