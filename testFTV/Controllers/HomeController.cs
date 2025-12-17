@@ -26,6 +26,7 @@ namespace testFTV.Controllers
         HotNewList = await _service.LoadHotNewList(),
         CarouselImages = await _service.LoadCarouselImages(),
         AnchorList = await _service.LoadAnchorList(),
+        ShortVideos = await _service.LoadShortVideos(),
         D1 = realtime.D1,
         D2 = realtime.D2,
         D3 = realtime.D3,

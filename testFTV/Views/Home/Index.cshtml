@@ -36,48 +36,54 @@
 <div class="row">
     <div class="col-main">
         <div class="cover-main cover-bg">
-            <div class="cover-left focus-news swiper-container">
-                <div class="cover-left">
-                    <div class="focus-news swiper-container">
-                        <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
-                        <ul class="focus-carousel swiper-wrapper">
-                            @foreach (var news in Model.FocusNewsList)
-                            {
-                                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                                <li class="swiper-slide">
-                                    <a href="@news.Url">
-                                        @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
-                                        {
-                                            <span class="img-block">
-                                                <img src="@news.ImageUrl" alt="@displayTitle" />
-                                            </span>
-                                        }
-                                        <span class="content">
-                                            <span class="title">@displayTitle</span>
+            <div class="cover-left">
+                <div class="focus-news swiper-container">
+                    <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
+                    <ul class="focus-carousel swiper-wrapper">
+                        @foreach (var news in Model.FocusNewsList)
+                        {
+                            var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
+                            <li class="swiper-slide">
+                                <a href="@news.Url">
+                                    @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
+                                    {
+                                        <span class="img-block">
+                                            <img src="@news.ImageUrl" alt="@displayTitle" />
                                         </span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                        <div class="swiper-pagination"></div>
-                    </div>
+                                    }
+                                    <span class="content">
+                                        <span class="title">@displayTitle</span>
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="swiper-pagination"></div>
                 </div>
+            </div>
 
-                <div class="cover-right">
-                    <div class="top-news">
-                        <div class="heading">
-                            <div class="title">
-                                <a class="d-block text-white" href="/popular/">熱門新聞</a>
-                            </div>
+            <div class="cover-right">
+                <div class="top-news">
+                    <div class="heading">
+                        <div class="title">
+                            <a class="d-block text-white" href="/popular/">熱門新聞</a>
                         </div>
-                        <ul>
-                            @foreach (var news in Model.HotNewList)
-                            {
-                                var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                                <li><a href="@news.Url">@displayTitle</a></li>
-                            }
-                        </ul>
                     </div>
+                    <ul>
+                        @foreach (var news in Model.HotNewList)
+                        {
+                            var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
+                            <li>
+                                <a href="@news.Url">
+                                    <div class="content">
+                                        <div class="title ellipsis">
+                                            @displayTitle
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </div>
@@ -110,50 +116,88 @@
             </div>
             <div class="row">
                 <div class='col-md-4 col-sm-6 button-buffer'>
-                    @* <asp:Literal ID="Lit_d1_st" runat="server"></asp:Literal> *@
+                    <div class='newsimg-area-item'>
+                        <a href="@Model.D1.SectionUrl">
+                            <div class='image-container'>
+                                <img class='img-fluid' loading='lazy' src="@Model.D1.SectionImageUrl" alt="@Model.D1.SectionShortTitle">
+                            </div>
+                            <div class='newsimg-area-text'>@Model.D1.SectionShortTitle</div>
+                        </a>
+                    </div>
                     <div class='index-news-list'>
                         <ul>
-                            @* <asp:Literal ID="Lit_d1_list" runat="server"></asp:Literal> *@
+                            @foreach (var n in Model.D1.Items.Skip(1))
+                            {
+                                <li><a href="@n.Url">@n.ShortTitle</a></li>
+                            }
+
                         </ul>
                     </div>
                 </div>
                 <div class='col-md-4 col-sm-6 button-buffer'>
-                    @* <asp:Literal ID="Lit_d2_st" runat="server"></asp:Literal> *@
+                    <div class='newsimg-area-item'>
+                        <a href="Model.D2.SectionUrl">
+                            <div class='image-container'>
+                                <img class='img-fluid' loading='lazy' src="@Model.D2.SectionImageUrl" alt="@Model.D2.SectionShortTitle">
+                            </div>
+                            <div class='newsimg-area-text'>@Model.D2.SectionShortTitle</div>
+                        </a>
+                    </div>
                     <div class='index-news-list'>
                         <ul>
-                            @* <asp:Literal ID="Lit_d2_list" runat="server"></asp:Literal> *@
+                            @foreach (var n in Model.D2.Items.Skip(1))
+                            {
+                                <li><a href="@n.Url">@n.ShortTitle</a></li>
+                            }
+
                         </ul>
                     </div>
                 </div>
                 <div class='col-md-4 col-sm-6 button-buffer'>
-                    @* <asp:Literal ID="Lit_d3_st" runat="server"></asp:Literal> *@
+                    <div class='newsimg-area-item'>
+                        <a href="@Model.D3.SectionUrl">
+                            <div class='image-container'>
+                                <img class='img-fluid' loading='lazy' src="@Model.D3.SectionImageUrl" alt="@Model.D3.SectionShortTitle">
+                            </div>
+                            <div class='newsimg-area-text'>@Model.D3.SectionShortTitle</div>
+                        </a>
+                    </div>
                     <div class='index-news-list'>
                         <ul>
-                            @* <asp:Literal ID="Lit_d3_list" runat="server"></asp:Literal> *@
+                            @foreach (var n in Model.D3.Items.Skip(1))
+                            {
+                                <li><a href="@n.Url">@n.ShortTitle</a></li>
+                            }
+
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="container mt-20">
-            <div class="row">
-                <div class="col-md-4">
-                    <h3>@Model.D1.SectionTitle</h3>
-                    <ul>
-                        @foreach (var n in Model.D1.Items)
-                        {
-                            <li><a href="@n.Url">@n.Title</a></li>
-                        }
-                    </ul>
+        <section class="row">
+            <div class="short-list col w-100 mt-20">
+                <div class="article-head">
+                    <div class="d-flex align-items-center short-video-box">
+                        <div class="short-video-container text-pink">精彩短影音</div>
+                    </div>
+                    <a class="btn btn-more" href="/shortvideo/">更多</a>
                 </div>
-
-                <div class="col-md-4">
-                    <h3>@Model.D2.SectionTitle</h3>
-                    <ul>
-                        @foreach (var n in Model.D2.Items)
+                <div class="shortVideoList swiper-container" id="short-video">
+                    <div class="short-btn-ctrl"><a class="short-btn-left"></a><a class="short-btn-right"></a></div>
+                    <ul class="cropped-container swiper-wrapper">
+                        @foreach (var video in Model.ShortVideos)
                         {
-                            <li><a href="@n.Url">@n.Title</a></li>
+                            <li class='clean-cropped swiper-slide'>
+                                <a class='video-link' href='@video.Url'>
+                                    <div class='thumbnail-wrapper'>
+                                        <img class='thumbnail-img' loading='lazy' src='@video.ImageUrl' alt='@video.Title'>
+                                    </div>
+                                    <div class='title-wrapper'>
+                                        <span class='short-video-title'>@video.Title</span>
+                                    </div>
+                                </a>
+                            </li>
                         }
                     </ul>
                 </div>

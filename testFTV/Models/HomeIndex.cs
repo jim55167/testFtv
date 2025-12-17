@@ -6,6 +6,7 @@
     public IEnumerable<NewsItem> HotNewsList { get; set; } = Enumerable.Empty<NewsItem>();
     public IEnumerable<NewsItem> FocusNewsList { get; set; } = Enumerable.Empty<NewsItem>();
     public IEnumerable<NewsItem> HotNewList { get; set; } = Enumerable.Empty<NewsItem>();
+    public IEnumerable<NewsItem> ShortVideos { get; set; } = Enumerable.Empty<NewsItem>();
 
     public SectionModel D1 { get; set; } = new();
     public SectionModel D2 { get; set; } = new();
@@ -13,6 +14,7 @@
 
     public IEnumerable<ImageCarouselItem> CarouselImages { get; set; } = Enumerable.Empty<ImageCarouselItem>();
     public IEnumerable<AnchorItem> AnchorList { get; set; } = Enumerable.Empty<AnchorItem>();
+
   }
 
   public class NewsItem
@@ -26,8 +28,10 @@
 
   public class SectionModel
   {
-    public string SectionTitle { get; set; } = string.Empty;
-    public IEnumerable<NewsItem> Items { get; set; } = Enumerable.Empty<NewsItem>();
+    public string SectionUrl { get; set; } = string.Empty;
+    public string SectionImageUrl { get; set; } = string.Empty;
+    public string SectionShortTitle { get; set; } = string.Empty;
+    public List<NewsItem> Items { get; set; } = new();
   }
 
   public class ImageCarouselItem
