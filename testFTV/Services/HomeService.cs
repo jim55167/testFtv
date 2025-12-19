@@ -275,7 +275,14 @@ namespace testFTV.Services
 
     public async Task<IEnumerable<NewsItem>> LoadShortVideos()
     {
-      var json = await GetApiJsonAsync("API/FTVYTShortVideoList.aspx");
+      var json = await GetApiJsonAsync(
+        "API/FTVYTShortVideoList.aspx",
+        new Dictionary<string, string>
+        {
+          ["Sp"] = "7",
+          ["Page"] = "1",
+
+        });
 
       if (json == null)
       {
@@ -288,7 +295,6 @@ namespace testFTV.Services
       {
         return Enumerable.Empty<NewsItem>();
       }
-
       return GetItems(json)
           .Select(item => new NewsItem
           {
@@ -297,7 +303,118 @@ namespace testFTV.Services
             Url = $"/shortvideo/detail/{FirstNonEmpty(item, "VideoId")}",
           })
           .Where(a => !string.IsNullOrWhiteSpace(a.Title));
-
     }
+
+    public async Task<IReadOnlyList<ProjNewsGroup>> LoadProjNews()
+    {
+      var json = await GetApiJsonAsync(
+          "API/HomeFeatureNew.aspx",
+          new Dictionary<string, string>
+          {
+            ["PageSize"] = "99",
+            ["Page"] = "1",
+          });
+
+      if (json == null) { return Array.Empty<ProjNewsGroup>(); }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return Array.Empty<ProjNewsGroup>();
+      }
+      const string defaultImg =
+          "https://cdn.ftvnews.com.tw/manasystem/FileData/NewsImg/b28ba1dc-ec15-4d06-94ce-2f3753d3abd6.jpg";
+
+      var items = json["ITEM"]?.Children() ?? Enumerable.Empty<JToken>();
+
+      var result = items.Select(item =>
+      {
+        var group = new ProjNewsGroup
+        {
+          ProjSN = FirstNonEmpty(item, "ProjSN"),
+          ProjTitle = FirstNonEmpty(item, "ProjTitle"),
+          ProjContent = FirstNonEmpty(item, "ProjContent"),
+          ProjImageUrl = FirstNonEmpty(item, "ProjImage"),
+        };
+
+        var itembs = item["ITEMB"]?.Children() ?? Enumerable.Empty<JToken>();
+
+        group.Items = itembs.Select(b =>
+        {
+          var img = FirstNonEmpty(b, "Image");
+          if (string.IsNullOrWhiteSpace(img)) img = defaultImg;
+
+          return new ProjNewsItem
+          {
+            ID = FirstNonEmpty(b, "ID"),
+            Title = FirstNonEmpty(b, "Title"),
+            Content = FirstNonEmpty(b, "Content"),
+            ImageUrl = img,
+            ThumbUrl = FirstNonEmpty(b, "Thumb"),
+            CreateDate = FirstNonEmpty(b, "CreateDate"),
+          };
+        })
+        .Where(n => !string.IsNullOrWhiteSpace(n.ID) && !string.IsNullOrWhiteSpace(n.Title))
+        .ToList();
+
+        return group;
+      })
+      .Where(g => !string.IsNullOrWhiteSpace(g.ProjSN) && !string.IsNullOrWhiteSpace(g.ProjTitle))
+      .ToList();
+
+      return result;
+    }
+
+    public async Task<IReadOnlyList<HomeVideoGroup>> LoadHomeVideo()
+    {
+      var json = await GetApiJsonAsync("API/HomeVideoNew.aspx");
+
+      if (json == null) { return []; }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
+      }
+
+      var items = json["ITEM"]?.Children() ?? Enumerable.Empty<JToken>();
+
+      var result = items.Select(item =>
+      {
+        var group = new HomeVideoGroup
+        {
+          TitleCate = FirstNonEmpty(item, "M_TitleCate"),
+          LinkCate = FirstNonEmpty(item, "M_LinkCate"),
+          Title = FirstNonEmpty(item, "M_Title"),
+          Img = FirstNonEmpty(item, "M_Img"),
+          VideoId = FirstNonEmpty(item, "M_videoId"),
+          Link = FirstNonEmpty(item, "M_Link"),
+        };
+
+        var itembs = item["ITEMB"]?.Children() ?? Enumerable.Empty<JToken>();
+
+        group.Items = itembs.Select(b =>
+        {
+          return new HomeVideoItem
+          {
+            ID = FirstNonEmpty(b, "ID"),
+            Title = FirstNonEmpty(b, "Title"),
+            ImageUrl = FirstNonEmpty(b, "Image"),
+            CreateDate = FirstNonEmpty(b, "CreateDate"),
+          };
+        })
+        .Where(n => !string.IsNullOrWhiteSpace(n.ID) && !string.IsNullOrWhiteSpace(n.Title))
+        .ToList();
+
+        return group;
+      })
+      .Where(g => !string.IsNullOrWhiteSpace(g.VideoId) && !string.IsNullOrWhiteSpace(g.TitleCate))
+      .ToList();
+
+      return result;
+    }
+
   }
 }

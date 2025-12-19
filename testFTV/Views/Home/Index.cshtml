@@ -15,7 +15,7 @@
     <div class="col col-marquee mt-20">
         <div class="marquee swiper-container">
             <ul class="marquee-carousel swiper-wrapper">
-                @foreach (var news in Model.HotNewsList)
+                @foreach (var news in Model.HotNewsMarqueeList)
                 {
                     var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
                     <li class="swiper-slide">
@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <ul>
-                        @foreach (var news in Model.HotNewList)
+                        @foreach (var news in Model.HotNewsList)
                         {
                             var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
                             <li>
@@ -202,6 +202,76 @@
                     </ul>
                 </div>
             </div>
+        </section>
+
+        <div class="swiper-article">
+            @* <asp:Literal ID="Lit_CarouselImage" runat="server"></asp:Literal> *@
+        </div>
+
+        <section class="row" id="View_ProjNews">
+            @if (Model.ProjNews != null && Model.ProjNews.Any())
+            {
+                foreach (var proj in Model.ProjNews)
+                {
+                    <div class="news-list cover-story col-xl-6 mt-20">
+                        <div class="heading">
+                            <div class="title">@proj.ProjTitle</div>
+                            <a class="btn btn-more" href="/topic/@proj.ProjSN/">更多</a>
+                        </div>
+
+                        <ul>
+                            @foreach (var news in proj.Items)
+                            {
+                                <li>
+                                    <a href="/news/detail/@news.ID">
+                                        <div class="img-block">
+                                            <img loading="lazy" src="@news.ImageUrl" alt="@news.Title" />
+                                        </div>
+                                        <div class="content">
+                                            <div class="title">@news.Title</div>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <div class="d-block text-center w-100 mb-40">
+                            <a class="btn" href="/topic/@proj.ProjSN/">更多新聞</a>
+                        </div>
+                    </div>
+                }
+            }
+        </section>
+
+        <section class="row" id="View_HomeVideo">
+            @if (Model.HomeVideo != null && Model.HomeVideo.Any())
+            {
+                foreach (var homeVideo in Model.HomeVideo)
+                {
+                    <div class='col-xl-6 mt-20'>
+                        <div class='video-list home'>
+                            <div class='heading'>
+                                <a class='title' href='/Video/@homeVideo.TitleCate'>@homeVideo.TitleCate</a>
+                                <a class='btn btn-more' href='/Video/@homeVideo.TitleCate'>更多</a>
+                            </div>
+                            <ul>
+                                @foreach (var news in homeVideo.Items)
+                                {
+                                    <li>
+                                        <a class="video" href="/video/detail/@news.ID">
+                                            <div class='img-block'>
+                                                <img loading='lazy' src='@news.ImageUrl' alt='@news.Title' />
+                                            </div>
+                                            <div class='content'>
+                                                <div class='title'>@news.Title</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            }
         </section>
 
         @{
