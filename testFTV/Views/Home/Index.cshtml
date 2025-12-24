@@ -4,265 +4,94 @@
     ViewData["Title"] = "民視新聞網 - 24小時不間斷專業新聞服務";
 }
 
-<div class="row">
-    @foreach (var item in Model.TextBasedGuide)
-    {
-        <div><a href="@item.Url">@item.Title</a></div>
-    }
-</div>
 
-<div class="row">
-    <div class="col col-marquee mt-20">
-        <div class="marquee swiper-container">
-            <ul class="marquee-carousel swiper-wrapper">
-                @foreach (var news in Model.HotNewsMarqueeList)
-                {
-                    var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                    <li class="swiper-slide">
-                        <a href="@news.Url">
-                            <span class="mr-2">@displayTitle</span>
-                            @if (!string.IsNullOrWhiteSpace(news.TimeText))
-                            {
-                                <small class="text-muted">@news.TimeText</small>
-                            }
-                        </a>
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-main">
-        <div class="cover-main cover-bg">
-            <div class="cover-left">
-                <div class="focus-news swiper-container">
-                    <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
-                    <ul class="focus-carousel swiper-wrapper">
-                        @foreach (var news in Model.FocusNewsList)
-                        {
-                            var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                            <li class="swiper-slide">
-                                <a href="@news.Url">
-                                    @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
-                                    {
-                                        <span class="img-block">
-                                            <img src="@news.ImageUrl" alt="@displayTitle" />
-                                        </span>
-                                    }
-                                    <span class="content">
-                                        <span class="title">@displayTitle</span>
-                                    </span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                    <div class="swiper-pagination"></div>
-                </div>
-            </div>
-
-            <div class="cover-right">
-                <div class="top-news">
-                    <div class="heading">
-                        <div class="title">
-                            <a class="d-block text-white" href="/popular/">熱門新聞</a>
-                        </div>
-                    </div>
-                    <ul>
-                        @foreach (var news in Model.HotNewsList)
-                        {
-                            var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
-                            <li>
-                                <a href="@news.Url">
-                                    <div class="content">
-                                        <div class="title ellipsis">
-                                            @displayTitle
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-20">
-            <div class="col-12">
-                <div class="live-block">
-                    <div class="live-player">
-                        <div id="top-live"></div>
-                    </div>
-                    <div class="live-channel living">
-                        <div class="heading">
-                            <div class="title">正在直播</div>
-                        </div>
-                        <div class="nicescroll">
-                            <ul id="living-list" class="row"></ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <section class="container mt-20">
-            <div class="row">
-                <div class="heading">
-                    <div class="title">
-                        <a class="d-block text-pink" href="/realtime/">即時新聞</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class='col-md-4 col-sm-6 button-buffer'>
-                    <div class='newsimg-area-item'>
-                        <a href="@Model.D1.SectionUrl">
-                            <div class='image-container'>
-                                <img class='img-fluid' loading='lazy' src="@Model.D1.SectionImageUrl" alt="@Model.D1.SectionShortTitle">
-                            </div>
-                            <div class='newsimg-area-text'>@Model.D1.SectionShortTitle</div>
-                        </a>
-                    </div>
-                    <div class='index-news-list'>
-                        <ul>
-                            @foreach (var n in Model.D1.Items.Skip(1))
-                            {
-                                <li><a href="@n.Url">@n.ShortTitle</a></li>
-                            }
-
-                        </ul>
-                    </div>
-                </div>
-                <div class='col-md-4 col-sm-6 button-buffer'>
-                    <div class='newsimg-area-item'>
-                        <a href="Model.D2.SectionUrl">
-                            <div class='image-container'>
-                                <img class='img-fluid' loading='lazy' src="@Model.D2.SectionImageUrl" alt="@Model.D2.SectionShortTitle">
-                            </div>
-                            <div class='newsimg-area-text'>@Model.D2.SectionShortTitle</div>
-                        </a>
-                    </div>
-                    <div class='index-news-list'>
-                        <ul>
-                            @foreach (var n in Model.D2.Items.Skip(1))
-                            {
-                                <li><a href="@n.Url">@n.ShortTitle</a></li>
-                            }
-
-                        </ul>
-                    </div>
-                </div>
-                <div class='col-md-4 col-sm-6 button-buffer'>
-                    <div class='newsimg-area-item'>
-                        <a href="@Model.D3.SectionUrl">
-                            <div class='image-container'>
-                                <img class='img-fluid' loading='lazy' src="@Model.D3.SectionImageUrl" alt="@Model.D3.SectionShortTitle">
-                            </div>
-                            <div class='newsimg-area-text'>@Model.D3.SectionShortTitle</div>
-                        </a>
-                    </div>
-                    <div class='index-news-list'>
-                        <ul>
-                            @foreach (var n in Model.D3.Items.Skip(1))
-                            {
-                                <li><a href="@n.Url">@n.ShortTitle</a></li>
-                            }
-
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="row">
-            <div class="short-list col w-100 mt-20">
-                <div class="article-head">
-                    <div class="d-flex align-items-center short-video-box">
-                        <div class="short-video-container text-pink">精彩短影音</div>
-                    </div>
-                    <a class="btn btn-more" href="/shortvideo/">更多</a>
-                </div>
-                <div class="shortVideoList swiper-container" id="short-video">
-                    <div class="short-btn-ctrl"><a class="short-btn-left"></a><a class="short-btn-right"></a></div>
-                    <ul class="cropped-container swiper-wrapper">
-                        @foreach (var video in Model.ShortVideos)
-                        {
-                            <li class='clean-cropped swiper-slide'>
-                                <a class='video-link' href='@video.Url'>
-                                    <div class='thumbnail-wrapper'>
-                                        <img class='thumbnail-img' loading='lazy' src='@video.ImageUrl' alt='@video.Title'>
-                                    </div>
-                                    <div class='title-wrapper'>
-                                        <span class='short-video-title'>@video.Title</span>
-                                    </div>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <div class="swiper-article">
-            @* <asp:Literal ID="Lit_CarouselImage" runat="server"></asp:Literal> *@
-        </div>
-
-        <section class="row" id="View_ProjNews">
-            @if (Model.ProjNews != null && Model.ProjNews.Any())
+<div class="side-body">
+    <div class="container">
+        <div class="row">
+            @if (Model.TextBasedGuide != null && Model.TextBasedGuide.Any())
             {
-                foreach (var proj in Model.ProjNews)
-                {
-                    <div class="news-list cover-story col-xl-6 mt-20">
-                        <div class="heading">
-                            <div class="title">@proj.ProjTitle</div>
-                            <a class="btn btn-more" href="/topic/@proj.ProjSN/">更多</a>
-                        </div>
-
-                        <ul>
-                            @foreach (var news in proj.Items)
-                            {
-                                <li>
-                                    <a href="/news/detail/@news.ID">
-                                        <div class="img-block">
-                                            <img loading="lazy" src="@news.ImageUrl" alt="@news.Title" />
-                                        </div>
-                                        <div class="content">
-                                            <div class="title">@news.Title</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                        <div class="d-block text-center w-100 mb-40">
-                            <a class="btn" href="/topic/@proj.ProjSN/">更多新聞</a>
-                        </div>
-                    </div>
-                }
+                <div class='col mt-20'>
+                    <ul class='section-nav'>
+                        @foreach (var item in Model.TextBasedGuide)
+                        {
+                            <li class='nav-horizontal'>
+                                <a class='nav-rounded' href="@item.Links">
+                                    <span class='text-white'>@item.Title</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             }
-        </section>
 
-        <section class="row" id="View_HomeVideo">
-            @if (Model.HomeVideo != null && Model.HomeVideo.Any())
-            {
-                foreach (var homeVideo in Model.HomeVideo)
-                {
-                    <div class='col-xl-6 mt-20'>
-                        <div class='video-list home'>
-                            <div class='heading'>
-                                <a class='title' href='/Video/@homeVideo.TitleCate'>@homeVideo.TitleCate</a>
-                                <a class='btn btn-more' href='/Video/@homeVideo.TitleCate'>更多</a>
+        </div>
+        <div class="row">
+            <div id="div_gpt_ftv_all_97090_1_0-frame" class="mt-20 mr-auto ml-auto text-center overflow-hidden d-none d-lg-block" style="max-width: 100%; width: 970px; height: 90px;"></div>
+            <div class="col col-marquee mt-20">
+                <div class="marquee swiper-container">
+                    <div class="btn-ctrl btn-ctrl-inner"><a class="btn-left"></a><a class="btn-right"></a></div>
+                    <ul class="marquee-carousel swiper-wrapper">
+                        @foreach (var item in Model.HotNewsMarqueeList)
+                        {
+                            var displayTitle = !string.IsNullOrWhiteSpace(item.ShortTitle) ? item.ShortTitle : item.Title;
+                            <li class="swiper-slide">
+                                <a class='ellipsis' href="@item.Links">
+                                    <div class='title'>@item.Title</div>
+                                    <div class='time' data-time='@item.CreateDate'>@item.CreateTime</div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-main">
+                <div class="cover-main cover-bg">
+                    <div class="cover-left">
+                        <div class="focus-news swiper-container">
+                            <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
+                            <ul class="focus-carousel swiper-wrapper">
+                                @foreach (var news in Model.FocusNewsList)
+                                {
+                                    var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
+                                    <li class="swiper-slide">
+                                        <a href="/news/detail/@news.ID">
+                                            @if (!string.IsNullOrWhiteSpace(news.ImageUrl))
+                                            {
+                                                <span class="img-block">
+                                                    <img src="@news.ImageUrl" alt="@displayTitle" />
+                                                </span>
+                                            }
+                                            <span class="content">
+                                                <span class="title">@displayTitle</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+
+                    <div class="cover-right">
+                        <div class="top-news">
+                            <div class="heading">
+                                <div class="title">
+                                    <a class="d-block text-white" href="/popular/">熱門新聞</a>
+                                </div>
                             </div>
                             <ul>
-                                @foreach (var news in homeVideo.Items)
+                                @foreach (var news in Model.HotNewsList)
                                 {
+                                    var displayTitle = !string.IsNullOrWhiteSpace(news.ShortTitle) ? news.ShortTitle : news.Title;
                                     <li>
-                                        <a class="video" href="/video/detail/@news.ID">
-                                            <div class='img-block'>
-                                                <img loading='lazy' src='@news.ImageUrl' alt='@news.Title' />
-                                            </div>
-                                            <div class='content'>
-                                                <div class='title'>@news.Title</div>
+                                        <a href="@news.Links">
+                                            <div class="content">
+                                                <div class="title ellipsis">
+                                                    @displayTitle
+                                                </div>
                                             </div>
                                         </a>
                                     </li>
@@ -270,41 +99,429 @@
                             </ul>
                         </div>
                     </div>
-                }
-            }
-        </section>
-
-        @{
-            var anchors = Model.AnchorList?.ToList() ?? new List<testFTV.Models.AnchorItem>();
-        }
-
-        <section class="container mt-20">
-            <h3>主播群</h3>
-            <div class="row">
-                <div class="text-muted">
-                    AnchorList Count = @(Model.AnchorList?.Count() ?? 0)
                 </div>
-                @if (anchors.Count == 0)
-                {
-                    <div class="col-12 text-center text-muted">尚無主播資料</div>
-                }
-                else
-                {
-                    @for (var i = 0; i < anchors.Count; i++)
-                    {
-                        var anchor = anchors[i];
-                        <div class="col-md-3 mb-3 text-center">
-                            <a href="@anchor.Url">
-                                @if (!string.IsNullOrWhiteSpace(anchor.ImageUrl))
+
+                <div class="row mt-20">
+                    <div class="col-12">
+                        <div class="live-block">
+                            <div class="live-player">
+                                <div id="top-live"></div>
+                            </div>
+                            <div class="live-channel living">
+                                <div class="heading">
+                                    <div class="title">正在直播</div>
+                                </div>
+                                <div class="nicescroll">
+                                    <ul id="living-list" class="row"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="container mt-20">
+                    <div class="row">
+                        <div class="heading">
+                            <div class="title">
+                                <a class="d-block text-pink" href="/realtime/">即時新聞</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class='col-md-4 col-sm-6 button-buffer'>
+                            <div class='newsimg-area-item'>
+                                <a href="@Model.D1.SectionUrl">
+                                    <div class='image-container'>
+                                        <img class='img-fluid' loading='lazy' src="@Model.D1.SectionImageUrl" alt="@Model.D1.SectionShortTitle">
+                                    </div>
+                                    <div class='newsimg-area-text'>@Model.D1.SectionShortTitle</div>
+                                </a>
+                            </div>
+                            <div class='index-news-list'>
+                                <ul>
+                                    @foreach (var n in Model.D1.Items.Skip(1))
+                                    {
+                                        <li><a href="@n.Links">@n.ShortTitle</a></li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class='col-md-4 col-sm-6 button-buffer'>
+                            <div class='newsimg-area-item'>
+                                <a href="Model.D2.SectionUrl">
+                                    <div class='image-container'>
+                                        <img class='img-fluid' loading='lazy' src="@Model.D2.SectionImageUrl" alt="@Model.D2.SectionShortTitle">
+                                    </div>
+                                    <div class='newsimg-area-text'>@Model.D2.SectionShortTitle</div>
+                                </a>
+                            </div>
+                            <div class='index-news-list'>
+                                <ul>
+                                    @foreach (var n in Model.D2.Items.Skip(1))
+                                    {
+                                        <li><a href="@n.Links">@n.ShortTitle</a></li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class='col-md-4 col-sm-6 button-buffer'>
+                            <div class='newsimg-area-item'>
+                                <a href="@Model.D3.SectionUrl">
+                                    <div class='image-container'>
+                                        <img class='img-fluid' loading='lazy' src="@Model.D3.SectionImageUrl" alt="@Model.D3.SectionShortTitle">
+                                    </div>
+                                    <div class='newsimg-area-text'>@Model.D3.SectionShortTitle</div>
+                                </a>
+                            </div>
+                            <div class='index-news-list'>
+                                <ul>
+                                    @foreach (var n in Model.D3.Items.Skip(1))
+                                    {
+                                        <li><a href="@n.Links">@n.ShortTitle</a></li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="row">
+                    <div class="short-list col w-100 mt-20">
+                        <div class="article-head">
+                            <div class="d-flex align-items-center short-video-box">
+                                <div class="short-video-container text-pink">精彩短影音</div>
+                            </div>
+                            <a class="btn btn-more" href="/shortvideo/">更多</a>
+                        </div>
+                        <div class="shortVideoList swiper-container" id="short-video">
+                            <div class="short-btn-ctrl"><a class="short-btn-left"></a><a class="short-btn-right"></a></div>
+                            <ul class="cropped-container swiper-wrapper">
+                                @foreach (var video in Model.ShortVideos)
                                 {
-                                    <img src="@anchor.ImageUrl" alt="@anchor.Name" class="img-fluid mb-2" />
+                                    <li class='clean-cropped swiper-slide'>
+                                        <a class='video-link' href='@video.Links'>
+                                            <div class='thumbnail-wrapper'>
+                                                <img class='thumbnail-img' loading='lazy' src='@video.ImageUrl' alt='@video.Title'>
+                                            </div>
+                                            <div class='title-wrapper'>
+                                                <span class='short-video-title'>@video.Title</span>
+                                            </div>
+                                        </a>
+                                    </li>
                                 }
-                                <div>@anchor.Name</div>
-                            </a>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="swiper-article">
+                    @if (Model.CarouselImage != null && Model.CarouselImage.Any())
+                    {
+                        <div class='carouselImage'>
+                            <div class='btn-ctrl'><a class='btn-left'></a><a class='btn-right'></a></div>
+                            <ul class='swiper-wrapper'>
+                                @foreach (var item in Model.CarouselImage)
+                                {
+                                    <li class='swiper-slide d-flex justify-content-center'>
+                                        <a href='@item.Links' class='d-flex flex-column justify-content-center align-items-center w-100'>
+                                            <div class='img-block'>
+                                                <img loading='lazy' class='swiper-lazy' src='@item.ImageUrl' alt='@item.Title' />
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                            <div class='swiper-pagination'></div>
                         </div>
                     }
-                }
+                </div>
+
+                <section class="row" id="View_ProjNews">
+                    @if (Model.ProjNews != null && Model.ProjNews.Any())
+                    {
+                        foreach (var proj in Model.ProjNews)
+                        {
+                            <div class="news-list cover-story col-xl-6 mt-20">
+                                <div class="heading">
+                                    <div class="title">@proj.ProjTitle</div>
+                                    <a class="btn btn-more" href="/topic/@proj.ProjSN/">更多</a>
+                                </div>
+
+                                <ul>
+                                    @foreach (var news in proj.Items)
+                                    {
+                                        <li>
+                                            <a href="/news/detail/@news.ID">
+                                                <div class="img-block">
+                                                    <img loading="lazy" src="@news.ImageUrl" alt="@news.Title" />
+                                                </div>
+                                                <div class="content">
+                                                    <div class="title">@news.Title</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                                <div class="d-block text-center w-100 mb-40">
+                                    <a class="btn" href="/topic/@proj.ProjSN/">更多新聞</a>
+                                </div>
+                            </div>
+                        }
+                    }
+                </section>
+
+                <section class="row" id="View_HomeVideo">
+                    @if (Model.HomeVideo != null && Model.HomeVideo.Any())
+                    {
+                        foreach (var homeVideo in Model.HomeVideo)
+                        {
+                            <div class='col-xl-6 mt-20'>
+                                <div class='video-list home'>
+                                    <div class='heading'>
+                                        <a class='title' href='/Video/@homeVideo.TitleCate'>@homeVideo.TitleCate</a>
+                                        <a class='btn btn-more' href='/Video/@homeVideo.TitleCate'>更多</a>
+                                    </div>
+                                    <ul>
+                                        @foreach (var news in homeVideo.Items)
+                                        {
+                                            <li>
+                                                <a class="video" href="/video/detail/@news.ID">
+                                                    <div class='img-block'>
+                                                        <img loading='lazy' src='@news.ImageUrl' alt='@news.Title' />
+                                                    </div>
+                                                    <div class='content'>
+                                                        <div class='title'>@news.Title</div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    }
+                </section>
+
+                <section class="row">
+                    <div class="col-12 mt-20">
+                        <div class="program-news swiper-container">
+                            <div class="heading">
+                                <div class="title">新聞節目</div>
+                            </div>
+                            <div class="btn-ctrl btn-ctrl-inner"><a class="btn-left"></a><a class="btn-right"></a></div>
+                            <ul class="program-carousel swiper-wrapper">
+                                @foreach (var item in Model.ProgList)
+                                {
+                                    <li class='swiper-slide'>
+                                        <a href='@item.Links'>
+                                            <div class='img-block' style='background-image: url("@item.ImageUrl");'>
+                                                <img loading='lazy' src='@item.ImageUrl' alt='@item.Title' />
+                                            </div>
+                                            <div class='content'>
+                                                <div Class='title'>@item.Title</div>
+                                                <div Class='desc'>@item.Content</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="anchor-list swiper-container mt-20">
+                    <div class="heading">
+                        <div class="title">主播專區</div>
+                    </div>
+                    <ul class="anchor-carousel swiper-wrapper">
+                        @foreach (var item in Model.AnchorList)
+                        {
+                            <li class='swiper-slide'>
+                                <a href='/anchor/detail/@item.ID'>
+                                    <div class='img-block'>
+                                        <img loading='lazy' src='@item.ImageUrl' alt='@item.Title' />
+                                    </div>
+                                    <div class='content'>
+                                        <div class='name'>@item.Title</div>
+                                        <div Class='job'>@item.JobTitle</div>
+                                    </div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
+                </section>
             </div>
-        </section>
+
+            <div class="col-side">
+                <div id="24hrTV" class="row cover-main cover-bg">
+                    <div class="col">
+                        <div class="live-channel">
+                            <div class="heading">
+                                <div class="title">民視新聞台直播</div>
+                                <a target="_self" class="btn btn-more" href="/live/live-channel">更多</a>
+                            </div>
+                            <div class="img-block">
+                                <a target="_self" href="/live/live-video/1/litv-ftv13">
+                                    @foreach (var item in Model.FTVLiveImage)
+                                    {
+                                        <img loading='lazy' src="@item.ImageUrl" alt='LiveImage' />
+                                    }
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="hotlive" class="row cover-main cover-bg ">
+                    <div class="col">
+                        <div class="live-channel">
+                            <div class="heading">
+                                <div class="title">近期熱播</div>
+                                <a class="btn btn-more" href="https://www.youtube.com/playlist?list=PLkP0kGDs5Otfsypa4ZWF2hTc5TQ8IF67u">更多</a>
+                            </div>
+                            <ul>
+                                @foreach (var item in Model.HotLive)
+                                {
+                                    <li class='d-none'>
+                                        <a class='video playLive' href='javascript:;' data-toggle='modal' data-videoidst='@item.ID' data-target='#video_view' data-videotitlest='@item.Title'>
+                                            <div class='img-block'>
+                                                <img loading='lazy' src='@item.ImageUrl' alt='@item.Title' />
+                                            </div>
+                                            <div class='content'>
+                                                <div class='title'>@item.Title</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="newVideo" class="row cover-main cover-bg mb-20">
+                    <div class="col">
+                        <div class="video-channel pb-16">
+                            <div class="heading">
+                                <div class="title">新聞有影</div>
+                            </div>
+                            <div class="owl-item">
+                                <div class="btn-ctrl">
+                                    <a class="btn-left"></a>
+                                    <a class="btn-right"></a>
+                                </div>
+                                <div class='swiper-wrapper'>
+                                    @foreach (var slide in Model.NewsVideo.Chunk(2))
+                                    {
+                                        <div class='swiper-slide newsvideo-area-item py-1 d-grid gap-1'>
+                                            @foreach (var item in slide)
+                                            {
+                                                <a class='video playLive' href='javascript:;' data-toggle='modal' data-videonewsid='@item.ID' data-videoplatformst='@item.Platform' data-ftvcdn='@item.CDNID' data-videoidst='@item.VideoId' data-target='#video_view' data-videotitlest='@item.Title'>
+                                                    <div class='img-block'>
+                                                        <img loading='lazy' src='@item.CheckImageUrl' alt='@item.Title' />
+                                                    </div>
+                                                    <div class='newsvideo-area-text'>@item.Title</div>
+                                                </a>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="featureNews"></div>
+
+                <div class="row cover-main">
+                    <div class="text-center mx-auto">
+                        <div id='div-gpt-ad-1591090833790-0' style='width: 300px; height: 250px;'>
+                            <script>
+                                googletag.cmd.push(function () { googletag.display('div-gpt-ad-1591090833790-0'); });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="fb-page fb-page-plugins" data-href="https://www.facebook.com/FTVNews53" data-tabs="timeline" data-width="300" data-height="500" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                        <blockquote cite="https://www.facebook.com/FTVNews53" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/FTVNews53">民視新聞</a></blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<div class="anchor-bottom d-sm-none d-block">
+    <div class="anchor-items">
+        <ul class="d-flex text-white m-0 justify-content-around align-items-center">
+            <li>
+                <a href="#" class="py-2 px-4 d-flex align-items-center text-white scrollTop">
+                    <i class="fa-regular fa-house fa-lg" style="color: #ffffff;"></i>
+                    <span class="pl-5">首頁</span>
+                </a>
+            </li>
+            <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="2" height="22" viewBox="0 0 2 22" fill="none">
+                    <path d="M1.5 1V0.5H0.5V1H1.5ZM0.5 1L0.5 22H1.5L1.5 1H0.5Z" fill="white" fill-opacity="0.31" />
+                </svg>
+            </li>
+            <li>
+                <a href="#24hrTV" class="py-2 px-4 d-flex align-items-center text-white anchorPoint">
+                    <i class="fa-regular fa-video fa-lg" style="color: #ffffff;"></i>
+                    <span class="pl-5">直播</span>
+                </a>
+            </li>
+            <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="2" height="22" viewBox="0 0 2 22" fill="none">
+                    <path d="M1.5 1V0.5H0.5V1H1.5ZM0.5 1L0.5 22H1.5L1.5 1H0.5Z" fill="white" fill-opacity="0.31" />
+                </svg>
+            </li>
+            <li>
+                <a href="#newVideo" class="py-2 px-4 d-flex align-items-center text-white anchorPoint">
+                    <i class="fa-regular fa-circle-play fa-lg" style="color: #ffffff;"></i>
+                    <span class="pl-5">影音</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="video_view" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header d-flex flex-row-reverse">
+                <a href="javascript:;" data-dismiss="modal" class="class d-flex"><i class="fa fa-times" aria-hidden="true" style="font-size: 24px;"></i></a>
+                <img src="https://cdn.ftvnews.com.tw/client/images/logo.png" style="width: 180px;">
+            </div>
+            <div class="modal-body d-flex flex-lg-row flex-column-reverse">
+                <div id="iframeCover"></div>
+                <div class="px-2 w-100" style="max-width: 380px;">
+                    <h3 id="iframeTitle" class="py-1"></h3>
+                    <hr class="d-none d-lg-block" />
+                    <div class="text-center py-2 d-none d-lg-block">
+                        <div class="mx-auto" style='width: 336px; height: 280px;'>
+                            <!-- /34018536/ftvnews_home_popup_300250 -->
+                            <div id='div-gpt-ad-popup_300250-0' style='min-width: 300px; min-height: 250px;'>
+                                <script>
+                                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-popup_300250-0'); });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Taboola -->
+<script type="text/javascript">
+    window._taboola = window._taboola || [];
+    _taboola.push({ flush: true });
+</script>
+
+<script src="https://cdn.ftvnews.com.tw/client/js/YTPlayer.js?ver=210409"></script>

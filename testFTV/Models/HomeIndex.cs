@@ -7,25 +7,33 @@
     public IEnumerable<NewsItem> FocusNewsList { get; set; } = [];
     public IEnumerable<NewsItem> HotNewsList { get; set; } = [];
     public IEnumerable<NewsItem> ShortVideos { get; set; } = [];
+    public IEnumerable<NewsItem> ProgList { get; set; } = [];
     public IEnumerable<ProjNewsGroup> ProjNews { get; set; } = [];
     public IEnumerable<HomeVideoGroup> HomeVideo { get; set; } = [];
+    public IEnumerable<LiveImage> FTVLiveImage { get; set; } = [];
+    public IEnumerable<HotLive> HotLive { get; set; } = [];
+    public IEnumerable<NewsVideo> NewsVideo { get; set; } = [];
 
     public SectionModel D1 { get; set; } = new();
     public SectionModel D2 { get; set; } = new();
     public SectionModel D3 { get; set; } = new();
 
-    public IEnumerable<ImageCarouselItem> CarouselImages { get; set; } = [];
+    public IEnumerable<CarouselImage> CarouselImage { get; set; } = [];
     public IEnumerable<AnchorItem> AnchorList { get; set; } = [];
 
   }
 
   public class NewsItem
   {
+    public string ID { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string ShortTitle { get; set; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
+    public string Links { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
-    public string TimeText { get; set; } = string.Empty;
+    public string CreateDate { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public string CreateTime { get; set; } = string.Empty;
+    public string Cate { get; set; } = string.Empty;
   }
 
   public class ProjNewsGroup
@@ -76,17 +84,46 @@
     public List<NewsItem> Items { get; set; } = new();
   }
 
-  public class ImageCarouselItem
+  public class CarouselImage
   {
+    public string Title { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
-    public string LinkUrl { get; set; } = string.Empty;
+    public string Links { get; set; } = string.Empty;
   }
 
   public class AnchorItem
   {
-    public string Name { get; set; } = string.Empty;
+    public string ID { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string JobTitle { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
   }
 
+  public class LiveImage
+  {
+    public string ImageUrl { get; set; } = string.Empty;
+  }
+
+  public class HotLive
+  {
+    public string ID { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+  }
+
+  public class NewsVideo
+  {
+    public string ID { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string VideoId { get; set; } = string.Empty;
+    public string Platform { get; set; } = string.Empty;
+    public string CDNID { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string YTImage { get; set; } = string.Empty;
+    public string Thumb { get; set; } = string.Empty;
+    public string CheckImageUrl =>
+        !string.IsNullOrWhiteSpace(Thumb) ? Thumb :
+        !string.IsNullOrWhiteSpace(ImageUrl) ? ImageUrl :
+        (YTImage ?? string.Empty);
+  }
 }

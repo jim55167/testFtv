@@ -1,6 +1,7 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Net;
 using testFTV.Models;
 
 namespace testFTV.Services
@@ -55,10 +56,17 @@ namespace testFTV.Services
             ["Type"] = type.ToString(),
             ["Sp"] = sp.ToString(),
           });
-
-      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      if (json == null)
       {
-        return Enumerable.Empty<JToken>();
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
       }
 
       return GetItems(json);
@@ -68,19 +76,28 @@ namespace testFTV.Services
     {
       var json = await GetApiJsonAsync(
           "API/ArticleMenuImage.aspx",
-          new Dictionary<string, string> { ["kind"] = "y" });
+          new Dictionary<string, string>
+          {
+            ["kind"] = "y"
+          });
 
-      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+      if (json == null)
       {
-        return Enumerable.Empty<NewsItem>();
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
       }
 
       return GetItems(json)
           .Select(item => new NewsItem
           {
-            Title = FirstNonEmpty(item, "Title", "title"),
-            Url = FirstNonEmpty(item, "links", "link", "url"),
-            ImageUrl = FirstNonEmpty(item, "image", "Image"),
+            Title = FirstNonEmpty(item, "title"),
+            Links = FirstNonEmpty(item, "links"),
           })
           .Where(i => !string.IsNullOrWhiteSpace(i.Title));
     }
@@ -88,20 +105,53 @@ namespace testFTV.Services
     public async Task<IEnumerable<NewsItem>> LoadHotNewsList()
     {
       var json = await GetApiJsonAsync("API/HotNews.aspx");
-      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+
+      if (json == null)
       {
-        return Enumerable.Empty<NewsItem>();
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
       }
 
       return GetItems(json)
-          .Select(item => new NewsItem
+        .Select(item =>
+        {
+          var cate = FirstNonEmpty(item, "Cate");   
+          var createDateRaw = FirstNonEmpty(item, "CreateDate");
+
+          var timeHHmm = "";
+
+          if (!string.IsNullOrWhiteSpace(createDateRaw) &&
+                DateTime.TryParse(
+                    createDateRaw,
+                    CultureInfo.GetCultureInfo("zh-TW"),
+                    DateTimeStyles.None,
+                    out var dt))
           {
-            Title = FirstNonEmpty(item, "Title", "TitleShort", "fsTitle"),
+            timeHHmm = dt.ToString("HH:mm", CultureInfo.InvariantCulture);
+          }
+
+          if (cate == "2") 
+          {
+            timeHHmm = "";
+          }
+          
+          return new NewsItem
+          {
+            Cate = cate,
+            Title = FirstNonEmpty(item, "Title"),
             ShortTitle = FirstNonEmpty(item, "TitleShort"),
-            Url = FirstNonEmpty(item, "links", "link", "url"),
-            TimeText = FirstNonEmpty(item, "CreateDate"),
-          })
-          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+            Links = FirstNonEmpty(item, "links"),
+            CreateDate = createDateRaw,
+            CreateTime = timeHHmm
+          };
+        })
+        .Where(i => !string.IsNullOrWhiteSpace(i.Title));
     }
 
     public async Task<IEnumerable<NewsItem>> LoadFocusNewsList()
@@ -111,12 +161,12 @@ namespace testFTV.Services
       return items
           .Select(item => new NewsItem
           {
-            Title = FirstNonEmpty(item, "Title", "TitleShort"),
-            ShortTitle = FirstNonEmpty(item, "TitleShort", "Title"),
-            Url = $"/news/detail/{FirstNonEmpty(item, "ID")}",
+            ID = FirstNonEmpty(item, "ID"),
+            Title = FirstNonEmpty(item, "Title"),
+            ShortTitle = FirstNonEmpty(item, "TitleShort"),
             ImageUrl = FirstNonEmpty(item, "Image"),
           })
-          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+          .Where(i => !string.IsNullOrWhiteSpace(i.ID));
     }
 
     public async Task<IEnumerable<NewsItem>> LoadHotNewList()
@@ -128,11 +178,11 @@ namespace testFTV.Services
           .Take(10)
           .Select(item => new NewsItem
           {
-            Title = FirstNonEmpty(item, "TitleShort", "Title"),
-            ShortTitle = FirstNonEmpty(item, "TitleShort", "Title"),
-            Url = $"/news/detail/{FirstNonEmpty(item, "ID")}",
+            ID = FirstNonEmpty(item, "ID"),
+            Title = FirstNonEmpty(item, "Title"),
+            ShortTitle = FirstNonEmpty(item, "TitleShort"),
           })
-          .Where(i => !string.IsNullOrWhiteSpace(i.Title));
+          .Where(i => !string.IsNullOrWhiteSpace(i.ID));
     }
 
     public async Task<(SectionModel D1, SectionModel D2, SectionModel D3)> LoadRealtime()
@@ -140,7 +190,7 @@ namespace testFTV.Services
 
       var emptySection = new SectionModel
       {
-        Items = new List<NewsItem>()
+        Items = []
       };
 
       var json = await GetApiJsonAsync(
@@ -166,11 +216,12 @@ namespace testFTV.Services
       var allItems = GetItems(json)
         .Select(item => new NewsItem
         {
-          Title = FirstNonEmpty(item, "TitleShort", "Title"),
-          ShortTitle = FirstNonEmpty(item, "TitleShort", "Title"),
-          Url = $"/news/detail/{FirstNonEmpty(item, "ID")}",
+          ID = FirstNonEmpty(item, "ID"),
+          Title = FirstNonEmpty(item, "Title"),
+          ShortTitle = FirstNonEmpty(item, "TitleShort"),
           ImageUrl = FirstNonEmpty(item, "Image"),
-          TimeText = FirstNonEmpty(item, "CreateDate"),
+          CreateDate = FirstNonEmpty(item, "CreateDate"),
+          Links = $"/news/detail/{FirstNonEmpty(item, "ID")}"
         })
         .Where(i => !string.IsNullOrWhiteSpace(i.Title))
         .ToList();
@@ -206,7 +257,7 @@ namespace testFTV.Services
       var d1 = new SectionModel
       {
         SectionShortTitle = d1Top?.Title,
-        SectionUrl = d1Top?.Url,
+        SectionUrl = d1Top?.Links,
         SectionImageUrl = d1Top?.ImageUrl,
         Items = d1Items,
       };
@@ -214,7 +265,7 @@ namespace testFTV.Services
       var d2 = new SectionModel
       {
         SectionShortTitle = d2Top?.Title,
-        SectionUrl = d2Top?.Url,
+        SectionUrl = d2Top?.Links,
         SectionImageUrl = d2Top?.ImageUrl,
         Items = d2Items,
       };
@@ -222,7 +273,7 @@ namespace testFTV.Services
       var d3 = new SectionModel
       {
         SectionShortTitle = d3Top?.Title,
-        SectionUrl = d3Top?.Url,
+        SectionUrl = d3Top?.Links,
         SectionImageUrl = d3Top?.ImageUrl,
         Items = d3Items,
       };
@@ -230,21 +281,29 @@ namespace testFTV.Services
       return (d1, d2, d3);
     }
 
-    public async Task<IEnumerable<ImageCarouselItem>> LoadCarouselImages()
+    public async Task<IEnumerable<CarouselImage>> LoadCarouselImage()
     {
       var json = await GetApiJsonAsync("API/CarouselImage.aspx");
-      if (json == null || !string.Equals(json["Status"]?.ToString(), "Success", StringComparison.OrdinalIgnoreCase))
+
+      if (json == null)
       {
-        return Enumerable.Empty<ImageCarouselItem>();
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
       }
 
       return GetItems(json)
-          .Select(item => new ImageCarouselItem
+          .Select(item => new CarouselImage
           {
-            ImageUrl = FirstNonEmpty(item, "image", "Image"),
-            LinkUrl = FirstNonEmpty(item, "links", "link", "url"),
+            Title = FirstNonEmpty(item, "Title"),
+            ImageUrl = FirstNonEmpty(item, "image"),
+            Links = FirstNonEmpty(item, "links"),
           })
-          .Where(i => !string.IsNullOrWhiteSpace(i.ImageUrl));
+          .Where(i => !string.IsNullOrWhiteSpace(i.Links));
     }
 
     public async Task<IEnumerable<AnchorItem>> LoadAnchorList()
@@ -253,24 +312,25 @@ namespace testFTV.Services
 
       if (json == null)
       {
-        return Enumerable.Empty<AnchorItem>();
+        return [];
       }
 
       var status = json["Status"]?.ToString();
 
       if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
       {
-        return Enumerable.Empty<AnchorItem>();
+        return [];
       }
 
       return GetItems(json)
           .Select(item => new AnchorItem
           {
-            Name = FirstNonEmpty(item, "Title", "Name"),
-            ImageUrl = FirstNonEmpty(item, "Image", "image"),
-            Url = $"/anchor/detail/{FirstNonEmpty(item, "ID")}",
+            ID = FirstNonEmpty(item, "ID"),
+            Title = FirstNonEmpty(item, "Title"),
+            ImageUrl = FirstNonEmpty(item, "Image"),
+            JobTitle = FirstNonEmpty(item, "JobTitle"),
           })
-          .Where(a => !string.IsNullOrWhiteSpace(a.Name));
+          .Where(a => !string.IsNullOrWhiteSpace(a.Title));
     }
 
     public async Task<IEnumerable<NewsItem>> LoadShortVideos()
@@ -281,28 +341,27 @@ namespace testFTV.Services
         {
           ["Sp"] = "7",
           ["Page"] = "1",
-
         });
 
       if (json == null)
       {
-        return Enumerable.Empty<NewsItem>();
+        return [];
       }
 
       var status = json["Status"]?.ToString();
 
       if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
       {
-        return Enumerable.Empty<NewsItem>();
+        return [];
       }
       return GetItems(json)
           .Select(item => new NewsItem
           {
             Title = FirstNonEmpty(item, "Title", "Name"),
             ImageUrl = FirstNonEmpty(item, "Image", "image"),
-            Url = $"/shortvideo/detail/{FirstNonEmpty(item, "VideoId")}",
+            Links = $"/shortvideo/detail/{FirstNonEmpty(item, "VideoId")}",
           })
-          .Where(a => !string.IsNullOrWhiteSpace(a.Title));
+          .Where(a => !string.IsNullOrWhiteSpace(a.Links));
     }
 
     public async Task<IReadOnlyList<ProjNewsGroup>> LoadProjNews()
@@ -315,13 +374,13 @@ namespace testFTV.Services
             ["Page"] = "1",
           });
 
-      if (json == null) { return Array.Empty<ProjNewsGroup>(); }
+      if (json == null) { return []; }
 
       var status = json["Status"]?.ToString();
 
       if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
       {
-        return Array.Empty<ProjNewsGroup>();
+        return [];
       }
       const string defaultImg =
           "https://cdn.ftvnews.com.tw/manasystem/FileData/NewsImg/b28ba1dc-ec15-4d06-94ce-2f3753d3abd6.jpg";
@@ -340,7 +399,7 @@ namespace testFTV.Services
 
         var itembs = item["ITEMB"]?.Children() ?? Enumerable.Empty<JToken>();
 
-        group.Items = itembs.Select(b =>
+        group.Items = [.. itembs.Select(b =>
         {
           var img = FirstNonEmpty(b, "Image");
           if (string.IsNullOrWhiteSpace(img)) img = defaultImg;
@@ -355,8 +414,7 @@ namespace testFTV.Services
             CreateDate = FirstNonEmpty(b, "CreateDate"),
           };
         })
-        .Where(n => !string.IsNullOrWhiteSpace(n.ID) && !string.IsNullOrWhiteSpace(n.Title))
-        .ToList();
+        .Where(n => !string.IsNullOrWhiteSpace(n.ID) && !string.IsNullOrWhiteSpace(n.Title))];
 
         return group;
       })
@@ -395,7 +453,7 @@ namespace testFTV.Services
 
         var itembs = item["ITEMB"]?.Children() ?? Enumerable.Empty<JToken>();
 
-        group.Items = itembs.Select(b =>
+        group.Items = [.. itembs.Select(b =>
         {
           return new HomeVideoItem
           {
@@ -405,8 +463,7 @@ namespace testFTV.Services
             CreateDate = FirstNonEmpty(b, "CreateDate"),
           };
         })
-        .Where(n => !string.IsNullOrWhiteSpace(n.ID) && !string.IsNullOrWhiteSpace(n.Title))
-        .ToList();
+        .Where(n => !string.IsNullOrWhiteSpace(n.ID) && !string.IsNullOrWhiteSpace(n.Title))];
 
         return group;
       })
@@ -416,5 +473,112 @@ namespace testFTV.Services
       return result;
     }
 
+    public async Task<IEnumerable<NewsItem>> LoadProgList()
+    {
+      var json = await GetApiJsonAsync("API/Prog.aspx");
+
+      if (json == null)
+      {
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
+      }
+
+      return GetItems(json)
+          .Select(item => new NewsItem
+          {
+            Title = FirstNonEmpty(item, "Title"),
+            ImageUrl = FirstNonEmpty(item, "Image"),
+            Links = FirstNonEmpty(item, "Link"),
+            Content = FirstNonEmpty(item, "Content")
+          })
+          .Where(a => !string.IsNullOrWhiteSpace(a.Title));
+    }
+
+    public async Task<IEnumerable<LiveImage>> LoadFTVLiveImage()
+    {
+      var json = await GetApiJsonAsync("API/FTVLiveImage.aspx");
+
+      if (json == null)
+      {
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
+      }
+
+      return GetItems(json)
+          .Select(item => new LiveImage
+          {
+            ImageUrl = FirstNonEmpty(item, "image"),
+          })
+          .Where(a => !string.IsNullOrWhiteSpace(a.ImageUrl));
+    }
+
+    public async Task<IEnumerable<HotLive>> LoadHotLive()
+    {
+      var json = await GetApiJsonAsync("API/HotLive.aspx");
+
+      if (json == null)
+      {
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
+      }
+
+      return GetItems(json)
+          .Select(item => new HotLive
+          {
+            ID = FirstNonEmpty(item, "ID"),
+            Title = FirstNonEmpty(item, "Title"),
+            ImageUrl = FirstNonEmpty(item, "Image"),
+          })
+          .Where(a => !string.IsNullOrWhiteSpace(a.ID));
+    }
+
+    public async Task<IEnumerable<NewsVideo>> LoadNewsVideo()
+    {
+      var json = await GetApiJsonAsync("API/FtvGetHotVNewOrd.aspx");
+
+      if (json == null)
+      {
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
+      }
+
+      return [.. GetItems(json)
+          .Select(item => new NewsVideo
+          {
+            ID = FirstNonEmpty(item, "ID"),
+            Title = FirstNonEmpty(item, "Title"),
+            VideoId = FirstNonEmpty(item, "Video"),
+            Platform = FirstNonEmpty(item, "VPlatform"),
+            CDNID = FirstNonEmpty(item, "FtvNewsCDNID"),
+            Thumb = FirstNonEmpty(item, "Thumb"),
+            ImageUrl = FirstNonEmpty(item, "Image"),
+            YTImage = FirstNonEmpty(item, "YTImage")
+          })
+          .Where(a => !string.IsNullOrWhiteSpace(a.ID))];
+    }
   }
 }
