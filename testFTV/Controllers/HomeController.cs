@@ -5,14 +5,9 @@ using testFTV.Services;
 
 namespace testFTV.Controllers
 {
-  public class HomeController : Controller
+  public class HomeController(HomeService service) : Controller
   {
-    private readonly Services.HomeService _service;
-
-    public HomeController(Services.HomeService service)
-    {
-      _service = service;
-    }
+    private readonly HomeService _service = service;
 
     public async Task<IActionResult> Index()
     {

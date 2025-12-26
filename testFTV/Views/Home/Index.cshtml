@@ -307,10 +307,10 @@
 
                 <section class="row">
                     <div class="col-12 mt-20">
+                        <div class="heading">
+                            <div class="title">新聞節目</div>
+                        </div>
                         <div class="program-news swiper-container">
-                            <div class="heading">
-                                <div class="title">新聞節目</div>
-                            </div>
                             <div class="btn-ctrl btn-ctrl-inner"><a class="btn-left"></a><a class="btn-right"></a></div>
                             <ul class="program-carousel swiper-wrapper">
                                 @foreach (var item in Model.ProgList)
@@ -332,27 +332,29 @@
                     </div>
                 </section>
 
-                <section class="anchor-list swiper-container mt-20">
+                <section class="mt-20">
                     <div class="heading">
                         <div class="title">主播專區</div>
                     </div>
-                    <ul class="anchor-carousel swiper-wrapper">
-                        @foreach (var item in Model.AnchorList)
-                        {
-                            <li class='swiper-slide'>
-                                <a href='/anchor/detail/@item.ID'>
-                                    <div class='img-block'>
-                                        <img loading='lazy' src='@item.ImageUrl' alt='@item.Title' />
-                                    </div>
-                                    <div class='content'>
-                                        <div class='name'>@item.Title</div>
-                                        <div Class='job'>@item.JobTitle</div>
-                                    </div>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                    <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
+                    <div class="anchor-list swiper-container">
+                        <div class="btn-ctrl"><a class="btn-left"></a><a class="btn-right"></a></div>
+                        <ul class="anchor-carousel swiper-wrapper">
+                            @foreach (var item in Model.AnchorList)
+                            {
+                                <li class='swiper-slide'>
+                                    <a href='/anchor/detail/@item.ID'>
+                                        <div class='img-block'>
+                                            <img loading='lazy' src='@item.ImageUrl' alt='@item.Title' />
+                                        </div>
+                                        <div class='content'>
+                                            <div class='name'>@item.Title</div>
+                                            <div Class='job'>@item.JobTitle</div>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </section>
             </div>
 

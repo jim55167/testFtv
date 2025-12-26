@@ -1,0 +1,158 @@
+﻿@model testFTV.Models.TagList
+@{
+    ViewData["Title"] = "tag";
+}
+
+<div class="side-body">
+    <article class="container mt-5">
+        <div class="swiper-article position-relative">
+            @* <asp:Literal ID="Lit_MenuImage" runat="server"></asp:Literal> *@
+        </div>
+        @* <asp:Literal ID="Lit_Banner" runat="server"></asp:Literal> *@
+        @* <asp:Literal ID="Lit_CssContent" runat="server"></asp:Literal> *@
+        <div class="row topic-style"></div>
+        <div class="col-article mapTitle-list mt-5">
+            <ul class="mb-0 d-flex">
+                <li>
+                    <a href="/">首頁</a>
+                </li>
+                <li>
+                    <span>
+                        @* <asp:Literal ID="Lit_SiteMapTitle" runat="server"></asp:Literal> *@
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-article">
+                <section class="news-list news-list-h mt-5">
+                    <ul class="row">
+                        @for (var i = 0; i < Model.FtvGetNewsWeb.Count; i++)
+                        {
+                            var n = Model.FtvGetNewsWeb[i];
+                            <li class='rl-list col-12'>
+                                <div class="news-block" href="/news/detail/@n.ID">
+                                    <a class="img-block">
+                                        <img loading="lazy" src="@n.ImageUrl" alt="@n.Title" />
+                                    </a>
+                                    <div class="content">
+                                        <a href="/news/detail/@n.ID">
+                                            <div class="time" data-time="@n.CreateDate">@n.CreateDate</div>
+                                            <h2 class="title">@n.Title</h2>
+                                            <div class="desc">@n.Content</div>
+                                        </a>
+
+                                        @{
+                                            var shareUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/news/detail/{n.ID}";
+                                            var shareTitle = $"{n.Title} - 民視新聞網";
+                                        }
+
+                                        <div class="share-btn">
+                                            <ul>
+                                                <li>
+                                                    <a class="share_fb" href="javascript:;" data-type="facebook" data-url="@shareUrl" data-title="@shareTitle">
+                                                        <i class='fab fa-facebook-square'></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="share_twt" href="javascript:;" data-type='twitter' data-url="@shareUrl" data-title="@shareTitle">
+                                                        <i class='fa-brands fa-square-x-twitter'></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="share_line" href="javascript:;" data-type='line' data-url="@shareUrl" data-title="@shareTitle">
+                                                        <i class='fab fa-line'></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            if (i == 1)
+                            {
+                                <li class="rl-list col-12">
+                                    <div id="taboola-category-stream-a"></div>
+                                    <script type="text/javascript">
+                                        window._taboola = window._taboola || [];
+                                        _taboola.push({
+                                          mode: 'thumbnail-stream-sf-1x1',
+                                          container: 'taboola-category-stream-a',
+                                          placement: 'Category Stream A',
+                                          target_type: 'mix'
+                                        });
+                                    </script>
+                                </li>
+                            }
+
+                            if (i == 3)
+                            {
+                                <li class="rl-list col-12">
+                                    <div id="taboola-category-stream-b"></div>
+                                    <script type="text/javascript">
+                                        window._taboola = window._taboola || [];
+                                        _taboola.push({
+                                          mode: 'thumbnail-stream-sf-1x1',
+                                          container: 'taboola-category-stream-b',
+                                          placement: 'Category Stream B',
+                                          target_type: 'mix'
+                                        });
+                                    </script>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </section>
+                <section class="news-list" id="View_newslist" runat="server" visible="true">
+                    <div class="d-flex flex-column align-content-center align-items-center w-100">
+                        <nav aria-label="Page navigation" class="d-flex">
+                            <ul class="pagination">
+                                @* <asp:Literal ID="Lit_Pagination" runat="server"></asp:Literal> *@
+                            </ul>
+                        </nav>
+                        <span class="pagiNum">
+                            @* <asp:Literal ID="Lit_PageTxt" runat="server"></asp:Literal> *@
+                        </span>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-side">
+                <!--start:Hastags關聯-->
+                <div class="tag" id="Views_HashTagsR" runat="server" visible="false">
+                    <div class="heading">
+                        <div class="title">推薦Hashtags</div>
+                    </div>
+                    <ul>
+                        @* <asp:Literal ID="Lit_HashTagsR" runat="server"></asp:Literal> *@
+                    </ul>
+                </div>
+                <!--end:Hastags關聯-->
+                <!--start:熱門新聞-->
+                <div class="popnews-list">
+                    <div class="heading">
+                        <div class="title">熱門新聞</div>
+                    </div>
+                    <div class="bg-white rounded">
+                        <div class="content">
+                            <div class="origin">
+                                <span>熱門關鍵字</span>
+                            </div>
+                            <canvas id="word_cloud" class="word_cloud"></canvas>
+                        </div>
+                    </div>
+                    <ul>
+                        @* <asp:Literal ID="Lit_HotNewList" runat="server"></asp:Literal> *@
+                    </ul>
+                </div>
+                <!--end:熱門新聞-->
+                <div class="text-center">
+                    <div class="fb-page fb-page-plugins" data-href="https://www.facebook.com/FTVNews53" data-tabs="timeline" data-width="300" data-height="500" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                        <blockquote cite="https://www.facebook.com/FTVNews53" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/FTVNews53">民視新聞</a></blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+</div>

@@ -13,6 +13,7 @@ builder.Services.AddSingleton<P_APIInfo>();
 builder.Services.AddScoped<HomeService>();
 builder.Services.AddScoped<FooterService>();
 builder.Services.AddScoped<MenuService>();
+builder.Services.AddScoped<TagListService>();
 builder.Services.AddSingleton<Now_date>();
 
 builder.Services.AddControllersWithViews();
@@ -37,8 +38,14 @@ app.UseStaticFiles();
 // --------------------------------------
 // Default Route
 // --------------------------------------
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+app.MapControllerRoute(
+    name: "tag",
+    pattern: "tag/{id}",
+    defaults: new { controller = "Tag", action = "Index" });

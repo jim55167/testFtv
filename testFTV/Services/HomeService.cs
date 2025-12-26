@@ -11,9 +11,7 @@ namespace testFTV.Services
     private readonly F_httpPost _httpPost;
     private readonly string _apiDomainV2;
 
-    public HomeService(
-        F_httpPost httpPost,
-        P_APIInfo apiInfo)
+    public HomeService( F_httpPost httpPost, P_APIInfo apiInfo)
     {
       _httpPost = httpPost;
       _apiDomainV2 = apiInfo.UrlInfo(15);
