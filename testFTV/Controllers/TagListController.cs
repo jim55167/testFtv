@@ -18,7 +18,7 @@ namespace testFTV.Controllers
     }
 
     [HttpGet("{id}")]
-    [HttpGet("{id}/{page:int}")]
+    [HttpGet("{id}/{page:int?}")]
     public async Task<IActionResult> Index(string id, int page = 1)
     {
       var vm = await _service.LoadFtvGetNewsWeb(id, page);

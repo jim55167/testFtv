@@ -5,12 +5,11 @@
     public string TagId { get; set; } = string.Empty;
     public string TagTitle { get; set; } = string.Empty;
     public IReadOnlyList<NewsWebN> FtvGetNewsWeb { get; set; } = [];
+    public IEnumerable<HashTags> HashTagsInfo { get; set; } = [];
 
-    // === VB: Page / PageTotal / Lit_News_ListTitle / Lit_NewsList / Meta_TitleSt ===
     public int Page { get; set; } = 1;
     public int PageTotal { get; set; } = 0;
 
-    // VB: "xxx - 第N頁 - 相關新聞 - 民視新聞網"
     public string PageTitle { get; set; } = string.Empty;
 
     // VB: postlist_obj -> JSON-LD
@@ -30,6 +29,14 @@
     public string ImageUrl { get; set; } = string.Empty;
     public string CreateDate { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
+  }
+
+  public class HashTags
+  {
+    public string Title { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string CssContent { get; set; } = string.Empty;
   }
 
   public class Pagination

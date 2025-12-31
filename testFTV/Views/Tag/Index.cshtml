@@ -1,6 +1,6 @@
 ﻿@model testFTV.Models.TagList
 @{
-    ViewData["Title"] = "tag";
+    ViewData["Title"] = Model.TagId;
 }
 
 <div class="side-body">
@@ -8,8 +8,24 @@
         <div class="swiper-article position-relative">
             @* <asp:Literal ID="Lit_MenuImage" runat="server"></asp:Literal> *@
         </div>
-        @* <asp:Literal ID="Lit_Banner" runat="server"></asp:Literal> *@
-        @* <asp:Literal ID="Lit_CssContent" runat="server"></asp:Literal> *@
+        @if (Model.HashTagsInfo != null && Model.HashTagsInfo.Any())
+        {
+            @foreach (var item in Model.HashTagsInfo)
+            {
+                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                {
+                    <div class='banner container mt-40'>
+                        <div class='row'>
+                            <div class='col'>
+                                <img loading='lazy' alt='@item.Title' src='@item.ImageUrl'>
+                                <div class='desc'>@item.Description</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @item.CssContent
+            }
+        }
         <div class="row topic-style"></div>
         <div class="col-article mapTitle-list mt-5">
             <ul class="mb-0 d-flex">
@@ -18,7 +34,7 @@
                 </li>
                 <li>
                     <span>
-                        @* <asp:Literal ID="Lit_SiteMapTitle" runat="server"></asp:Literal> *@
+                        @Model.TagId
                     </span>
                 </li>
             </ul>
@@ -43,7 +59,7 @@
                                         </a>
 
                                         @{
-                                            var shareUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/news/detail/{n.ID}";
+                                            var shareUrl = $"https://www.ftvnews.com.tw/news/detail/{n.ID}";
                                             var shareTitle = $"{n.Title} - 民視新聞網";
                                         }
 
@@ -108,11 +124,58 @@
                     <div class="d-flex flex-column align-content-center align-items-center w-100">
                         <nav aria-label="Page navigation" class="d-flex">
                             <ul class="pagination">
-                                @* <asp:Literal ID="Lit_Pagination" runat="server"></asp:Literal> *@
+                                @{
+                                    var p = Model.SetPageLink;
+                                    string tagId = Model.TagId;
+
+                                    string PageUrl(int n) => $"/tag/{tagId}/{n}";
+                                }
+                                <!-- First -->
+                                <li class="page-item @(p.IsFirst ? "disabled" : "")">
+                                    <a class="page-link" href="@(p.IsFirst ? "javascript:;" : PageUrl(1))" aria-label="First">
+                                        <span aria-hidden="true"><i class="fa-solid fa-angles-left"></i></span>
+                                    </a>
+                                </li>
+
+                                <!-- Prev -->
+                                <li class="page-item @(p.IsFirst ? "disabled" : "")">
+                                    <a class="page-link" href="@(p.IsFirst ? "javascript:;" : PageUrl(p.CurrentPage - 1))" aria-label="Previous">
+                                        <span aria-hidden="true"><i class="fa-solid fa-angle-left"></i></span>
+                                    </a>
+                                </li>
+                                @foreach (var n in p.Pages)
+                                {
+                                    if (n == p.CurrentPage)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="javascript:;">@n</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@PageUrl(n)">@n</a>
+                                        </li>
+                                    }
+                                }
+
+                                <!-- Next -->
+                                <li class="page-item @(p.IsLast ? "disabled" : "")">
+                                    <a class="page-link" href="@(p.IsLast ? "javascript:;" : PageUrl(p.CurrentPage + 1))" aria-label="Next">
+                                        <span aria-hidden="true"><i class="fa-solid fa-angle-right"></i></span>
+                                    </a>
+                                </li>
+
+                                <!-- Last -->
+                                <li class="page-item @(p.IsLast ? "disabled" : "")">
+                                    <a class="page-link" href="@(p.IsLast ? "javascript:;" : PageUrl(p.TotalPages))" aria-label="Last">
+                                        <span aria-hidden="true"><i class="fa-solid fa-angles-right"></i></span>
+                                    </a>
+                                </li>
                             </ul>
                         </nav>
                         <span class="pagiNum">
-                            @* <asp:Literal ID="Lit_PageTxt" runat="server"></asp:Literal> *@
+                            目前頁數 : @Model.Page/@Model.PageTotal
                         </span>
                     </div>
                 </section>
@@ -156,3 +219,5 @@
         </div>
     </article>
 </div>
+
+<script srv=""></script>

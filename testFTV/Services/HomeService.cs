@@ -355,8 +355,8 @@ namespace testFTV.Services
       return GetItems(json)
           .Select(item => new NewsItem
           {
-            Title = FirstNonEmpty(item, "Title", "Name"),
-            ImageUrl = FirstNonEmpty(item, "Image", "image"),
+            Title = FirstNonEmpty(item, "Title"),
+            ImageUrl = FirstNonEmpty(item, "Image"),
             Links = $"/shortvideo/detail/{FirstNonEmpty(item, "VideoId")}",
           })
           .Where(a => !string.IsNullOrWhiteSpace(a.Links));

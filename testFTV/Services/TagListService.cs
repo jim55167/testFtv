@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using testFTV.Models;
 
 namespace testFTV.Services
 {
-    public class TagListService
-    {
+  public class TagListService
+  {
     private readonly F_httpPost _httpPost;
     private readonly string _apiDomainV2;
 
@@ -43,10 +44,7 @@ namespace testFTV.Services
       return string.Empty;
     }
 
-    private static bool IsValidTagId(string tagId)
-      => Regex.IsMatch(tagId, "^[A-Za-z0-9_-]+$");
-
-    private static Pagination BuildPagination(int page, int pageTotal, int maxViewPage = 5)
+    private static Pagination SetPageLink(int page, int pageTotal, int maxViewPage = 5)
     {
       if (pageTotal <= 0) return new Pagination { CurrentPage = page, TotalPages = 0 };
 
@@ -71,7 +69,10 @@ namespace testFTV.Services
 
     private static string BuildItemListJsonLd(IReadOnlyList<NewsWebN> items)
     {
-      if (items.Count == 0) return string.Empty;
+      if (items.Count == 0)
+      {
+        return string.Empty;
+      }
 
       var arr = new JArray();
       for (int i = 0; i < items.Count; i++)
@@ -94,7 +95,6 @@ namespace testFTV.Services
         ["itemListElement"] = arr
       };
 
-      // 你 VB 用 Formatting.Indented；這裡保留一致
       return JsonConvert.SerializeObject(obj, Formatting.Indented);
     }
 
@@ -105,15 +105,10 @@ namespace testFTV.Services
         return null;
       }
 
-      if (!IsValidTagId(tagId))
-      {
-        return null;
-      }
-
-      if (page < 1) 
+      if (page < 1)
       {
         page = 1;
-      };
+      }
 
       var json = await GetApiJsonAsync(
           "API/FtvGetNewsWebN.aspx",
@@ -137,6 +132,11 @@ namespace testFTV.Services
 
       int pageTotal = 0;
       int.TryParse(json["PageTotal"]?.ToString(), out pageTotal);
+
+      if (pageTotal > 0 && page > pageTotal)
+      {
+        page = pageTotal;
+      }
 
       var items = GetItems(json)
         .Select(item => new NewsWebN
@@ -167,10 +167,41 @@ namespace testFTV.Services
         MetaTitleCsv = metaTitleCsv,
         NewsListJsonLd = BuildItemListJsonLd(items),
         FtvGetNewsWeb = items,
-        SetPageLink = BuildPagination(page, pageTotal)
+        SetPageLink = SetPageLink(page, pageTotal)
       };
     }
 
+    public async Task<IEnumerable<HashTags>> LoadHashTagsInfo(string tagId)
+    {
+      var json = await GetApiJsonAsync(
+          "API/API_HashTagsInfo.aspx",
+          new Dictionary<string, string>
+          {
+            ["Cate"] = tagId
+          });
 
+      if (json == null)
+      {
+        return [];
+      }
+
+      var status = json["Status"]?.ToString();
+
+      if (!string.Equals(status, "Success", StringComparison.OrdinalIgnoreCase))
+      {
+        return [];
+      }
+      return GetItems(json)
+          .Select(item => new HashTags
+          {
+            Title = FirstNonEmpty(item, "Title"),
+            ImageUrl = FirstNonEmpty(item, "Image"),
+            Description = FirstNonEmpty(item, "description"),
+            CssContent = FirstNonEmpty(item, "CssContent")
+          })
+          .Where(a => !string.IsNullOrWhiteSpace(a.Title))
+          .ToList();
+
+    }
   }
 }

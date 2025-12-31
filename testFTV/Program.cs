@@ -43,9 +43,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
-
 app.MapControllerRoute(
     name: "tag",
-    pattern: "tag/{id}",
-    defaults: new { controller = "Tag", action = "Index" });
+    pattern: "tag/{id}/{page:int?}",
+    defaults: new { controller = "TagList", action = "Index" });
+
+app.Run();
