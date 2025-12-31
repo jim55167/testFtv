@@ -15,8 +15,9 @@ namespace testFTV.ViewComponents
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-      Models.FooterModel model = await _footerService.LoadIdleInfoAsync();
+      var model = await _footerService.LoadIdleInfoAsync() ?? new FooterModel();
       return View(model);
     }
+
   }
 }

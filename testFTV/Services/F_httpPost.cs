@@ -162,42 +162,46 @@ namespace testFTV.Services
     string relativePath,
     IDictionary<string, string>? query = null,
     string httpMethod = "GET",
-    string contentType = "application/x-www-form-urlencoded;charset=UTF-8",
     string postParams = "",
     string expectedCode = "200")
     {
       // 組 QueryString
-      var queryString = query == null || !query.Any()
-          ? string.Empty
-          : "?" + string.Join("&", query.Select(kv =>
-              $"{WebUtility.UrlEncode(kv.Key)}={WebUtility.UrlEncode(kv.Value)}"));
+      var queryString = (query == null || !query.Any())
+        ? ""
+        : "?" + string.Join("&", query.Select(kv =>
+            $"{WebUtility.UrlEncode(kv.Key)}={WebUtility.UrlEncode(kv.Value)}"));
 
       // 組完整 URL（避免重複或缺少斜線）
       var url = $"{baseUrl.TrimEnd('/')}/{relativePath.TrimStart('/')}{queryString}";
+      using var request = new HttpRequestMessage(new HttpMethod(httpMethod), url);
 
       // 統一帶上 TokenKey + SubscriptionKey
-      var headers = new Dictionary<string, string>
+      request.Headers.TryAddWithoutValidation("TokenKey", TokenKey);
+      request.Headers.TryAddWithoutValidation("Ocp-Apim-Subscription-Key", SubscriptionKey);
+      request.Headers.TryAddWithoutValidation("Accept", "application/json");
+
+      if (string.Equals(httpMethod, "POST", StringComparison.OrdinalIgnoreCase))
       {
-        ["TokenKey"] = TokenKey,
-        ["Ocp-Apim-Subscription-Key"] = SubscriptionKey,
-      };
+        request.Content = new StringContent(postParams ?? "", Encoding.UTF8, "application/x-www-form-urlencoded");
+      }
 
-      var response = await SendWithHeaders(
-          url,
-          contentType,
-          postParams,
-          httpMethod,
-          headers,
-          expectedCode);
+      using var res = await _http.SendAsync(request);
+      var body = await res.Content.ReadAsStringAsync();
 
-      if (string.IsNullOrWhiteSpace(response) || response.StartsWith("HTTP StatusCode"))
+      if (((int)res.StatusCode).ToString() != expectedCode)
+      {
+        return null;
+      }
+
+      if (string.IsNullOrWhiteSpace(body))
       {
         return null;
       }
 
       try
       {
-        return JObject.Parse(response);
+        var token = JToken.Parse(body);
+        return token as JObject;
       }
       catch (Exception ex)
       {
